@@ -30,7 +30,7 @@ export default function Index() {
   function handleSubmit() {
     const data = { name, age, email };
     setFormData(data);
-    router.push("/(form capc)/welcome");
+    router.push("/(forms dass)/welcome");
   }
 
   return (

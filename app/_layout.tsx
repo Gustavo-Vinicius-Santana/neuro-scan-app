@@ -9,11 +9,7 @@ export default function RootLayout() {
         headerTitleStyle: { fontSize: 25 },
         headerTitleAlign: "center",
       }} />
-      <Stack.Screen name="result" options={{
-        title: "Result", 
-        headerTitleStyle: { fontSize: 25 },
-        headerTitleAlign: "center",
-      }} />
+      <Stack.Screen name="result" options={{headerShown: false}}/>
 
       <Stack.Screen name="(form capc)" options={{headerShown: false}}/>
       <Stack.Screen name="(form ffmq)" options={{headerShown: false}}/>
