@@ -1,93 +1,61 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import OptionGroup from "@/components/groupButtons/OptionGroup";
+import BtnForm from "@/components/buttons/btnForm";
 
 export default function CAPCQuestion1() {
-    const router = useRouter();
+  const router = useRouter();
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-    const handleAnswer = (value: number) => {
-        // Aqui você pode salvar a resposta no estado global ou local
-        console.log("Resposta selecionada:", value);
-    };
+  const options = [
+    { id: 1, label: "1 - Nunca" },
+    { id: 2, label: "2 - Raramente" },
+    { id: 3, label: "3 - Às vezes" },
+    { id: 4, label: "4 - Frequentemente" },
+    { id: 5, label: "5 - Sempre" },
+  ];
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.question}>
-                1. Eu consigo soluções para problemas através dos meus sonhos.
-            </Text>
+  const handleAnswer = (value: number) => {
+    console.log("Resposta selecionada:", value);
 
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(1)}
-            >
-                <Text style={styles.optionText}>1 - Nunca</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(2)}
-            >
-                <Text style={styles.optionText}>2 - Raramente</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(3)}
-            >
-                <Text style={styles.optionText}>3 - Às vezes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(4)}
-            >
-                <Text style={styles.optionText}>4 - Frequentemente</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(5)}
-            >
-                <Text style={styles.optionText}>5 - Sempre</Text>
-            </TouchableOpacity>
+  };
 
-            <TouchableOpacity
-                style={styles.nextButton}
-                onPress={() => router.push("/question2")}
-            >
-                <Text style={styles.nextButtonText}>Próxima</Text>
-            </TouchableOpacity>
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <Text style={styles.question}>
+        1. Eu consigo soluções para problemas através dos meus sonhos.
+      </Text>
+
+      <OptionGroup
+        options={options}
+        selected={selectedOption}
+        onSelect={(id) => {
+          setSelectedOption(id);
+          handleAnswer(id);
+        }}
+      />
+
+      <BtnForm
+        title="Próxima"
+        onPress={() => router.push("/question2")}
+        disabled={selectedOption === null}
+        color="#3B82F6" // azul
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        justifyContent: "center",
-    },
-    question: {
-        fontSize: 20,
-        fontWeight: "bold",
-        textAlign: "center",
-        marginBottom: 30,
-    },
-    option: {
-        backgroundColor: "#E5E7EB",
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        marginBottom: 15,
-    },
-    optionText: {
-        fontSize: 16,
-    },
-    nextButton: {
-        marginTop: 30,
-        backgroundColor: "#3B82F6",
-        paddingVertical: 15,
-        borderRadius: 8,
-        alignItems: "center",
-    },
-    nextButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+  },
+  question: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 30,
+  },
 });

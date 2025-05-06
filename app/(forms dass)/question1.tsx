@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
+import BtnForm from "@/components/buttons/btnForm";
 
 export default function Question1() {
     const router = useRouter();
@@ -13,11 +14,12 @@ export default function Question1() {
         { id: 1, label: "1 - Aconteceu comigo algumas vezes na semana" },
         { id: 2, label: "2 - Aconteceu comigo boa parte da semana" },
         { id: 3, label: "3 - Aconteceu comigo na maior parte do tempo essa semana" },
-      ];
+    ];
 
     const handleAnswer = (value: number) => {
         console.log("Resposta selecionada:", value);
-    };
+        
+      };
 
     return (
         <View style={styles.container}>
@@ -27,16 +29,18 @@ export default function Question1() {
             <OptionGroup
                 options={options}
                 selected={selectedOption}
-                onSelect={(id) => setSelectedOption(id)}
+                onSelect={(id) => {
+                    setSelectedOption(id);
+                    handleAnswer(id);
+                }}
             />
 
-
-            <TouchableOpacity
-                style={styles.nextButton}
-                onPress={() => router.push("/question2")}
-            >
-                <Text style={styles.nextButtonText}>Próxima</Text>
-            </TouchableOpacity>
+            <BtnForm
+                title="Próximo"
+                color="#4F46E5"
+                onPress={() => router.push("/(forms dass)/question2")}
+                disabled={selectedOption === null}
+            />
         </View>
     );
 }
@@ -52,27 +56,5 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 30,
-    },
-    option: {
-        backgroundColor: "#E5E7EB",
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        marginBottom: 15,
-    },
-    optionText: {
-        fontSize: 16,
-    },
-    nextButton: {
-        marginTop: 30,
-        backgroundColor: "#4F46E5",
-        paddingVertical: 15,
-        borderRadius: 8,
-        alignItems: "center",
-    },
-    nextButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
     },
 });
