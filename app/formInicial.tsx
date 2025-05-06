@@ -1,19 +1,24 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Accelerometer } from 'expo-sensors';
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
-import useForm from "@/store/useForm";
+import useFormStore from "@/store/useForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 
+type FormData = {
+  name: string;
+  age: string;
+  email: string;
+};
+
 export default function FormInicial() {
   const router = useRouter();
-  const { setFormData } = useForm();
+  const { setFormData } = useFormStore();
 
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
 
   const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
 
@@ -29,26 +34,44 @@ export default function FormInicial() {
 
   const { x, y, z } = acceleration;
 
-  function handleSubmit() {
-    const data = { name, age, email };
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     setFormData(data);
     router.push("/(forms dass)/welcome");
-  }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Título da página */}
+
       <Text style={styles.pageTitle}>Formulário Inicial</Text>
 
       <View style={{ width: "100%", maxWidth: 500 }}>
 
-        <InputText label="Nome" placeholder="Seu nome" />
+      <InputText
+        label="Nome"
+        placeholder="Seu nome"
+        name="name"
+        control={control}
+        rules={{ required: true }}
+      />
 
-        <InputNumber label="Idade" placeholder="Sua idade" />
+      <InputNumber
+        label="Idade"
+        placeholder="Sua idade"
+        name="age"
+        control={control}
+        rules={{ required: true }}
+        
+      />
 
-        <InputText label="Email" placeholder="Seu email" />
+        <InputText
+          label="Email"
+          placeholder="Seu email"
+          name="email"
+          control={control}
+          rules={{ required: true}}
+        />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
@@ -76,24 +99,6 @@ const styles = StyleSheet.create({
     color: "#2c3e50",
     marginBottom: 30,
     textAlign: "center",
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "#fff",
   },
   button: {
     backgroundColor: "#007BFF",
