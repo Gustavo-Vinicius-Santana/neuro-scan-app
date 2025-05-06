@@ -69,10 +69,17 @@ export default function FormInicial() {
           placeholder="Seu email"
           name="email"
           control={control}
-          rules={{ required: true}}
+          rules={{ 
+            required: true, 
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Digite um email válido",
+            },
+          }}
         />
 
-        <BtnForm         title="Enviar"
+        <BtnForm         
+        title="Enviar"
         onPress={handleSubmit(onSubmit)}
         disabled={!isValid}/>
       </View>
