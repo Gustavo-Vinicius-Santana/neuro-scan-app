@@ -4,6 +4,8 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-nativ
 import { Accelerometer } from 'expo-sensors';
 
 import useForm from "@/store/useForm";
+import InputText from "@/components/inputs/InputText";
+import InputNumber from "@/components/inputs/InputNumber";
 
 export default function FormInicial() {
   const router = useRouter();
@@ -39,37 +41,12 @@ export default function FormInicial() {
       <Text style={styles.pageTitle}>Formulário Inicial</Text>
 
       <View style={{ width: "100%", maxWidth: 500 }}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nome:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Seu nome"
-            placeholderTextColor="#aaa"
-            onChangeText={setName}
-          />
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Idade:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Sua idade"
-            placeholderTextColor="#aaa"
-            keyboardType="numeric"
-            onChangeText={setAge}
-          />
-        </View>
+        <InputText label="Nome" placeholder="Seu nome" />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-mail:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Seu e-mail"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={setEmail}
-          />
-        </View>
+        <InputNumber label="Idade" placeholder="Sua idade" />
+
+        <InputText label="Email" placeholder="Seu email" />
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Enviar</Text>
