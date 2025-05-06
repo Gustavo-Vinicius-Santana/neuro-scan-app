@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
@@ -13,6 +14,7 @@ export default function Question1() {
         perguntas,
         setResposta,
         incrementaClique,
+        setTempo,
     } = useQuestionStore();
 
     const questionData = perguntas[questionIndex];
@@ -25,7 +27,21 @@ export default function Question1() {
 
     const handleAnswer = (value: number) => {
         setResposta(questionIndex, value);
-        incrementaClique(questionIndex, value); 
+        incrementaClique(questionIndex, value);
+    };
+
+    const startTimeRef = useRef<number>(0);
+
+    useEffect(() => {
+        startTimeRef.current = Date.now();
+    }, []);
+
+    const handleNext = () => {
+        const endTime = Date.now();
+        const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+        setTempo(questionIndex, elapsedSeconds);
+
+        router.push("/(forms dass)/question2");
     };
 
     return (
@@ -44,7 +60,7 @@ export default function Question1() {
             <BtnForm
                 title="Próximo"
                 color="#4F46E5"
-                onPress={() => router.push("/(forms dass)/question2")}
+                onPress={handleNext}
                 disabled={questionData.resposta === null}
             />
         </View>

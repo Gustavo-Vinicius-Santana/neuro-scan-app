@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useFfmqStore } from "@/store/useFormFfmq";
@@ -9,7 +9,7 @@ export default function FFMQQuestion2() {
   const router = useRouter();
   const questionIndex = 1;
 
-  const { perguntas, setResposta, incrementaClique } = useFfmqStore();
+  const { perguntas, setResposta, incrementaClique, setTempo } = useFfmqStore();
 
   const questionData = perguntas[questionIndex];
 
@@ -27,6 +27,20 @@ export default function FFMQQuestion2() {
 
   };
 
+    const startTimeRef = useRef<number>(0);
+  
+    useEffect(() => {
+        startTimeRef.current = Date.now();
+    }, []);
+  
+    const handleNext = () => {
+        const endTime = Date.now();
+        const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+        setTempo(questionIndex, elapsedSeconds);
+  
+        router.push("/(form capc)/welcome");
+    };
+
   return (
     <View style={styles.container}>
       <Text style={styles.question}>
@@ -43,9 +57,9 @@ export default function FFMQQuestion2() {
 
       <BtnForm
         title="Finalizar form capc"
-        onPress={() => router.push("/(form capc)/welcome")}
+        onPress={handleNext}
         disabled={questionData.resposta === null}
-        color="#10B981" // verde
+        color="#10B981"
       />
     </View>
   );

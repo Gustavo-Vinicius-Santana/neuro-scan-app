@@ -2,12 +2,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuestionStore } from "@/store/useFormDass";
 
 export default function Question2() {
     const router = useRouter();
-    const { perguntas, setResposta, incrementaClique } = useQuestionStore();
+    const { perguntas, setResposta, incrementaClique, setTempo } = useQuestionStore();
 
     const questionIndex = 1;
 
@@ -23,6 +23,20 @@ export default function Question2() {
         setResposta(questionIndex, value);
         incrementaClique(questionIndex, value); 
       };
+
+          const startTimeRef = useRef<number>(0);
+      
+          useEffect(() => {
+              startTimeRef.current = Date.now();
+          }, []);
+      
+          const handleNext = () => {
+              const endTime = Date.now();
+              const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+              setTempo(questionIndex, elapsedSeconds);
+      
+              router.push("/(form ffmq)/welcome");
+          };
 
     return (
         <View style={styles.container}>
@@ -40,7 +54,7 @@ export default function Question2() {
             <BtnForm
                 title="Finalizar Dass-21"
                 color="#4F46E5"
-                onPress={() => router.push("/(form ffmq)/welcome")}
+                onPress={handleNext}
                 disabled={questionData.resposta === null}
             />
         </View>

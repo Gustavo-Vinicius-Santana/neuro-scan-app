@@ -3,13 +3,14 @@ import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useFfmqStore } from "@/store/useFormFfmq";
+import { useEffect, useRef } from "react";
 
 export default function FfmqQuestion1() {
   const router = useRouter();
 
   const questionIndex = 0;
 
-  const { perguntas, setResposta, incrementaClique } = useFfmqStore();
+  const { perguntas, setResposta, incrementaClique, setTempo } = useFfmqStore();
 
   const questionData = perguntas[questionIndex];
 
@@ -24,6 +25,20 @@ export default function FfmqQuestion1() {
   const handleAnswer = (value: number) => {
     setResposta(questionIndex, value);
     incrementaClique(questionIndex, value);
+  };
+
+  const startTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+      startTimeRef.current = Date.now();
+  }, []);
+
+  const handleNext = () => {
+      const endTime = Date.now();
+      const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+      setTempo(questionIndex, elapsedSeconds);
+
+      router.push("/question2");
   };
 
   return (
@@ -43,7 +58,7 @@ export default function FfmqQuestion1() {
       <BtnForm
         title="Próxima"
         color="#10B981"
-        onPress={() => router.push("/question2")}
+        onPress={handleNext}
         disabled={questionData.resposta === null}
       />
     </View>
