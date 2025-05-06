@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { Accelerometer } from 'expo-sensors';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
 import useFormStore from "@/store/useForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
+import BtnForm from "@/components/buttons/btnForm";
 
 type FormData = {
   name: string;
@@ -18,7 +19,7 @@ export default function FormInicial() {
   const router = useRouter();
   const { setFormData } = useFormStore();
 
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
   const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
 
@@ -71,9 +72,9 @@ export default function FormInicial() {
           rules={{ required: true}}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.buttonText}>Enviar</Text>
-        </TouchableOpacity>
+        <BtnForm         title="Enviar"
+        onPress={handleSubmit(onSubmit)}
+        disabled={!isValid}/>
       </View>
 
       <View style={{ marginTop: 20 }}>
