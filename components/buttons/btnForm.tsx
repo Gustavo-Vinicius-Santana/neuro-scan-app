@@ -5,12 +5,21 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
+  color?: string;
 };
 
-export default function BtnForm({ title, onPress, disabled = false }: ButtonProps) {
+export default function BtnForm({
+  title,
+  onPress,
+  disabled = false,
+  color = "#007BFF",
+}: ButtonProps) {
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.buttonDisabled]}
+      style={[
+        styles.button,
+        { backgroundColor: disabled ? "#A9A9A9" : color },
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
@@ -23,14 +32,11 @@ export default function BtnForm({ title, onPress, disabled = false }: ButtonProp
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#007BFF",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
     width: "100%",
-  },
-  buttonDisabled: {
-    backgroundColor: "#A9A9A9", // Cor opaca
+    marginTop: 25,
   },
   buttonText: {
     color: "#fff",
@@ -38,6 +44,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttonTextDisabled: {
-    color: "#D3D3D3", // Texto mais claro quando desabilitado
+    color: "#D3D3D3",
   },
 });

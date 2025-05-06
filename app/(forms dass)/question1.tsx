@@ -1,11 +1,21 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import OptionGroup from "@/components/groupButtons/OptionGroup";
 
 export default function Question1() {
     const router = useRouter();
 
+    const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+    const options = [
+        { id: 0, label: "0 - Não aconteceu comigo essa semana" },
+        { id: 1, label: "1 - Aconteceu comigo algumas vezes na semana" },
+        { id: 2, label: "2 - Aconteceu comigo boa parte da semana" },
+        { id: 3, label: "3 - Aconteceu comigo na maior parte do tempo essa semana" },
+      ];
+
     const handleAnswer = (value: number) => {
-        // Aqui você pode salvar a resposta no estado global ou local,
         console.log("Resposta selecionada:", value);
     };
 
@@ -14,38 +24,12 @@ export default function Question1() {
             <Text style={styles.question}>
                 1. Achei difícil me acalmar essa semana?
             </Text>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(0)}
-            >
-                <Text style={styles.optionText}>
-                    0 - Não aconteceu comigo essa semana
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(1)}
-            >
-                <Text style={styles.optionText}>
-                    1 - Aconteceu comigo algumas vezes na semana
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(2)}
-            >
-                <Text style={styles.optionText}>
-                    2 - Aconteceu comigo boa parte da semana
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleAnswer(3)}
-            >
-                <Text style={styles.optionText}>
-                    3 - Aconteceu comigo na maior parte do tempo essa semana
-                </Text>
-            </TouchableOpacity>
+            <OptionGroup
+                options={options}
+                selected={selectedOption}
+                onSelect={(id) => setSelectedOption(id)}
+            />
+
 
             <TouchableOpacity
                 style={styles.nextButton}
