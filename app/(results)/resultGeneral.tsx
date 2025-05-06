@@ -1,25 +1,29 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import useInicialForm from "@/store/useInicialForm";
 
 export default function Result() {
   const router = useRouter();
 
+  const { formData } = useInicialForm();
+
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Resultados</Text>
 
       <View style={styles.card}>
         <Text style={styles.label}>Nome:</Text>
-        <Text style={styles.value}>Exemplo Nome</Text>
+        <Text style={styles.value}>{formData.name}</Text>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>Idade:</Text>
-        <Text style={styles.value}>30</Text>
+        <Text style={styles.value}>{formData.age}</Text>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>email@exemplo.com</Text>
+        <Text style={styles.value}>{formData.email}</Text>
       </View>
 
       <View style={styles.card}>
@@ -53,6 +57,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f4f4f4",
     padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333",
   },
   card: {
     width: "100%",

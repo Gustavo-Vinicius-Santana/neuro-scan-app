@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { useFfmqStore } from "@/store/useFormFfmq";
 
 export default function ResultFfmq() {
@@ -52,9 +52,36 @@ export default function ResultFfmq() {
                 <Text style={styles.result}>{naoReatividade} pontos</Text>
             </View>
 
-            <Text style={styles.note}>
-                * Estes são dados baseados nas respostas coletadas. Substitua conforme necessário.
-            </Text>
+            <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
+
+            <ScrollView style={styles.scrollArea}>
+                {perguntas.map((pergunta, index) => (
+                    <View key={index} style={styles.responseCard}>
+                        <Text style={styles.questionText}>Pergunta {index + 1}</Text>
+                        <Text style={styles.detail}>
+                            Resposta: {pergunta.resposta !== null ? pergunta.resposta : "Não respondido"}
+                        </Text>
+                        <Text style={styles.detail}>
+                            Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 1: {pergunta.cliqueResposta1 ?? 0} vezes
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 2: {pergunta.cliqueResposta2 ?? 0} vezes
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 3: {pergunta.cliqueResposta3 ?? 0} vezes
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 4: {pergunta.cliqueResposta4 ?? 0} vezes
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 5: {pergunta.cliqueResposta5 ?? 0} vezes
+                        </Text>
+                    </View>
+                ))}
+            </ScrollView>
         </View>
     );
 }
@@ -72,6 +99,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         color: "#333",
     },
+    subtitle: {
+        fontSize: 20,
+        fontWeight: "600",
+        marginVertical: 15,
+        color: "#444",
+    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -82,6 +115,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    scrollArea: {
+        maxHeight: 300,
+        marginBottom: 15,
+    },
+    responseCard: {
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 2,
     },
     label: {
         fontSize: 18,
@@ -95,10 +143,15 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         marginBottom: 6,
     },
-    note: {
+    questionText: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginBottom: 6,
+        color: "#333",
+    },
+    detail: {
         fontSize: 14,
-        color: "#777",
-        textAlign: "center",
-        marginTop: 20,
+        color: "#555",
+        marginBottom: 4,
     },
 });
