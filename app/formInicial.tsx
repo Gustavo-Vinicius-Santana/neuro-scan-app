@@ -1,17 +1,25 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { Accelerometer } from 'expo-sensors';
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
-import useForm from "@/store/useForm";
+import useFormStore from "@/store/useForm";
+import InputText from "@/components/inputs/InputText";
+import InputNumber from "@/components/inputs/InputNumber";
+import BtnForm from "@/components/buttons/btnForm";
+
+type FormData = {
+  name: string;
+  age: string;
+  email: string;
+};
 
 export default function FormInicial() {
   const router = useRouter();
-  const { setFormData } = useForm();
+  const { setFormData } = useFormStore();
 
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
+  const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
   const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
 
@@ -27,53 +35,53 @@ export default function FormInicial() {
 
   const { x, y, z } = acceleration;
 
-  function handleSubmit() {
-    const data = { name, age, email };
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     setFormData(data);
     router.push("/(forms dass)/welcome");
-  }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Título da página */}
+
       <Text style={styles.pageTitle}>Formulário Inicial</Text>
 
       <View style={{ width: "100%", maxWidth: 500 }}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nome:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Seu nome"
-            placeholderTextColor="#aaa"
-            onChangeText={setName}
-          />
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Idade:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Sua idade"
-            placeholderTextColor="#aaa"
-            keyboardType="numeric"
-            onChangeText={setAge}
-          />
-        </View>
+      <InputText
+        label="Nome"
+        placeholder="Seu nome"
+        name="name"
+        control={control}
+        rules={{ required: true }}
+      />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-mail:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Seu e-mail"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={setEmail}
-          />
-        </View>
+      <InputNumber
+        label="Idade"
+        placeholder="Sua idade"
+        name="age"
+        control={control}
+        rules={{ required: true }}
+        
+      />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Enviar</Text>
-        </TouchableOpacity>
+        <InputText
+          label="Email"
+          placeholder="Seu email"
+          name="email"
+          control={control}
+          rules={{ 
+            required: true, 
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Digite um email válido",
+            },
+          }}
+        />
+
+        <BtnForm         
+        title="Enviar"
+        onPress={handleSubmit(onSubmit)}
+        disabled={!isValid}/>
       </View>
 
       <View style={{ marginTop: 20 }}>
@@ -99,24 +107,6 @@ const styles = StyleSheet.create({
     color: "#2c3e50",
     marginBottom: 30,
     textAlign: "center",
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "#fff",
   },
   button: {
     backgroundColor: "#007BFF",
