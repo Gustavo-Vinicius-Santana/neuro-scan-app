@@ -3,10 +3,16 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
+import { useCapcStore } from "@/store/useFormCapc";
 
 export default function CAPCQuestion1() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  const questionIndex = 0;
+
+  const { perguntas, setResposta, incrementaClique } = useCapcStore();
+
+  const questionData = perguntas[questionIndex];
 
   const options = [
     { id: 1, label: "1 - Nunca" },
@@ -17,7 +23,8 @@ export default function CAPCQuestion1() {
   ];
 
   const handleAnswer = (value: number) => {
-    console.log("Resposta selecionada:", value);
+    setResposta(questionIndex, value);
+    incrementaClique(questionIndex, value);
 
   };
 
@@ -29,9 +36,8 @@ export default function CAPCQuestion1() {
 
       <OptionGroup
         options={options}
-        selected={selectedOption}
+        selected={questionData.resposta}
         onSelect={(id) => {
-          setSelectedOption(id);
           handleAnswer(id);
         }}
       />
@@ -39,7 +45,7 @@ export default function CAPCQuestion1() {
       <BtnForm
         title="Próxima"
         onPress={() => router.push("/question2")}
-        disabled={selectedOption === null}
+        disabled={questionData === null}
         color="#3B82F6" // azul
       />
     </View>

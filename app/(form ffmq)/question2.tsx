@@ -3,10 +3,15 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
+import { useFfmqStore } from "@/store/useFormFfmq";
 
 export default function FFMQQuestion2() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const questionIndex = 1;
+
+  const { perguntas, setResposta, incrementaClique } = useFfmqStore();
+
+  const questionData = perguntas[questionIndex];
 
   const options = [
     { id: 1, label: "1 - Nunca" },
@@ -17,7 +22,8 @@ export default function FFMQQuestion2() {
   ];
 
   const handleAnswer = (value: number) => {
-    console.log("Resposta selecionada:", value);
+    setResposta(questionIndex, value);
+    incrementaClique(questionIndex, value);
 
   };
 
@@ -29,9 +35,8 @@ export default function FFMQQuestion2() {
 
       <OptionGroup
         options={options}
-        selected={selectedOption}
+        selected={questionData.resposta}
         onSelect={(id) => {
-          setSelectedOption(id);
           handleAnswer(id);
         }}
       />
@@ -39,7 +44,7 @@ export default function FFMQQuestion2() {
       <BtnForm
         title="Finalizar form capc"
         onPress={() => router.push("/(form capc)/welcome")}
-        disabled={selectedOption === null}
+        disabled={questionData.resposta === null}
         color="#10B981" // verde
       />
     </View>
