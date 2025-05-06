@@ -4,11 +4,8 @@ import { Header } from "react-native/Libraries/NewAppScreen";
 export default function RootLayout() {
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ 
-        title: "Form",
-        headerTitleStyle: { fontSize: 25 },
-        headerTitleAlign: "center",
-      }} />
+      <Stack.Screen name="index" options={{headerShown: false}}/>
+      <Stack.Screen name="formInicial" options={{headerShown: false}}/>
       <Stack.Screen name="result" options={{headerShown: false}}/>
 
       <Stack.Screen name="(form capc)" options={{headerShown: false}}/>
