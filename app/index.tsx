@@ -5,7 +5,7 @@ export default function Index() {
     const router = useRouter();
 
     const handleStart = () => {
-        router.push("/formInicial");
+        router.push("/sobre");
     };
 
     return (
