@@ -39,7 +39,7 @@ export default function CAPCQuestion2() {
 
       <BtnForm
         title="Finalizar capc"
-        onPress={() => router.push("/result")}
+        onPress={() => router.push("/(results)/resultGeneral")}
         disabled={selectedOption === null}
         color="#3B82F6"
       />

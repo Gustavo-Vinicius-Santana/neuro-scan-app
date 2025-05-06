@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Text, View, StyleSheet } from "react-native";
 import { Accelerometer } from 'expo-sensors';
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 
-import useFormStore from "@/store/useForm";
+import useInicialForm from "@/store/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
@@ -17,7 +17,7 @@ type FormData = {
 
 export default function FormInicial() {
   const router = useRouter();
-  const { setFormData } = useFormStore();
+  const { setFormData } = useInicialForm();
 
   const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
