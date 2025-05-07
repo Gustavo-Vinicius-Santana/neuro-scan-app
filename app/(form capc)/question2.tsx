@@ -1,12 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
+import { useCapcStore } from "@/store/useFormCapc";
 
 export default function CAPCQuestion2() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  
+  const questionIndex = 1;
+
+  const { perguntas, setResposta, incrementaClique, setTempo } = useCapcStore();
+
+  const questionData = perguntas[questionIndex];
 
   const options = [
     { id: 1, label: "1 - Nunca" },
@@ -17,9 +23,23 @@ export default function CAPCQuestion2() {
   ];
 
   const handleAnswer = (value: number) => {
-    console.log("Resposta selecionada:", value);
+    setResposta(questionIndex, value);
+    incrementaClique(questionIndex, value);
 
-    
+  };
+
+  const startTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+      startTimeRef.current = Date.now();
+  }, []);
+
+  const handleNext = () => {
+      const endTime = Date.now();
+      const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+      setTempo(questionIndex, elapsedSeconds);
+
+      router.push("/(results)/resultGeneral");
   };
 
   return (
@@ -30,17 +50,16 @@ export default function CAPCQuestion2() {
 
       <OptionGroup
         options={options}
-        selected={selectedOption}
+        selected={questionData.resposta}
         onSelect={(id) => {
-          setSelectedOption(id);
           handleAnswer(id);
         }}
       />
 
       <BtnForm
         title="Finalizar capc"
-        onPress={() => router.push("/result")}
-        disabled={selectedOption === null}
+        onPress={handleNext}
+        disabled={questionData.resposta === null}
         color="#3B82F6"
       />
     </View>

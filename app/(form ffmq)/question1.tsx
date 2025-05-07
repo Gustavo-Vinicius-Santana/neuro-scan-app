@@ -1,12 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
+import { useFfmqStore } from "@/store/useFormFfmq";
+import { useEffect, useRef } from "react";
 
-export default function FFMQQuestion1() {
+export default function FfmqQuestion1() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  const questionIndex = 0;
+
+  const { perguntas, setResposta, incrementaClique, setTempo } = useFfmqStore();
+
+  const questionData = perguntas[questionIndex];
 
   const options = [
     { id: 1, label: "1 - Nunca" },
@@ -17,31 +23,43 @@ export default function FFMQQuestion1() {
   ];
 
   const handleAnswer = (value: number) => {
-    console.log("Resposta selecionada:", value);
-    
+    setResposta(questionIndex, value);
+    incrementaClique(questionIndex, value);
+  };
+
+  const startTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+      startTimeRef.current = Date.now();
+  }, []);
+
+  const handleNext = () => {
+      const endTime = Date.now();
+      const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+      setTempo(questionIndex, elapsedSeconds);
+
+      router.push("/question2");
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.question}>
-        1. Quando estou caminhando, eu deliberadamente percebo as sensações do
-        meu corpo em movimento.
+        1. Quando estou caminhando, eu deliberadamente percebo as sensações do meu corpo em movimento.
       </Text>
 
       <OptionGroup
         options={options}
-        selected={selectedOption}
+        selected={questionData.resposta}
         onSelect={(id) => {
-          setSelectedOption(id);
           handleAnswer(id);
         }}
       />
 
       <BtnForm
         title="Próxima"
-        onPress={() => router.push("/question2")}
-        disabled={selectedOption === null}
-        color="#10B981" // verde
+        color="#10B981"
+        onPress={handleNext}
+        disabled={questionData.resposta === null}
       />
     </View>
   );
