@@ -11,7 +11,6 @@ export default function ResultCapc() {
         }, 0);
     };
 
-    // CAPC: índices organizados por dimensão
     const controleEmocionalIndices = [0, 1, 2, 3, 4];
     const planejamentoIndices = [5, 6, 7, 8, 9];
     const persistenciaIndices = [10, 11, 12, 13, 14];
@@ -26,24 +25,26 @@ export default function ResultCapc() {
         <View style={styles.container}>
             <Text style={styles.title}>Resultado do CAPC</Text>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Controle Emocional:</Text>
-                <Text style={styles.result}>{controleEmocional} pontos</Text>
-            </View>
+            <View style={styles.resultsGrid}>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Controle Emocional:</Text>
+                    <Text style={styles.result}>{controleEmocional} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Planejamento:</Text>
-                <Text style={styles.result}>{planejamento} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Planejamento:</Text>
+                    <Text style={styles.result}>{planejamento} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Persistência:</Text>
-                <Text style={styles.result}>{persistencia} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Persistência:</Text>
+                    <Text style={styles.result}>{persistencia} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Autocontrole:</Text>
-                <Text style={styles.result}>{autocontrole} pontos</Text>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Autocontrole:</Text>
+                    <Text style={styles.result}>{autocontrole} pontos</Text>
+                </View>
             </View>
 
             <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
@@ -95,11 +96,17 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         color: "#444",
     },
+    resultsGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 12,
         padding: 16,
         marginBottom: 15,
+        width: "48%", // <== para caber dois por linha com espaço entre eles
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -107,8 +114,6 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     scrollArea: {
-        maxHeight: 300,
-        marginBottom: 15,
     },
     responseCard: {
         backgroundColor: "#fff",

@@ -22,19 +22,21 @@ export default function ResultDass() {
         <View style={styles.container}>
             <Text style={styles.title}>Resultado do DASS-21</Text>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Estresse:</Text>
-                <Text style={styles.result}>{estresse} pontos</Text>
-            </View>
+            <View style={styles.resultsGrid}>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Estresse:</Text>
+                    <Text style={styles.result}>{estresse} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Ansiedade:</Text>
-                <Text style={styles.result}>{ansiedade} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Ansiedade:</Text>
+                    <Text style={styles.result}>{ansiedade} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Depressão:</Text>
-                <Text style={styles.result}>{depressao} pontos</Text>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Depressão:</Text>
+                    <Text style={styles.result}>{depressao} pontos</Text>
+                </View>
             </View>
 
             <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
@@ -86,11 +88,17 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         color: "#444",
     },
+    resultsGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 12,
         padding: 16,
         marginBottom: 15,
+        width: "48%",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -98,8 +106,6 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     scrollArea: {
-        maxHeight: 300, // Ajuste conforme necessário
-        marginBottom: 15,
     },
     responseCard: {
         backgroundColor: "#fff",

@@ -27,29 +27,31 @@ export default function ResultFfmq() {
         <View style={styles.container}>
             <Text style={styles.title}>Resultado do FFMQ</Text>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Observação:</Text>
-                <Text style={styles.result}>{observacao} pontos</Text>
-            </View>
+            <View style={styles.resultsGrid}>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Observação:</Text>
+                    <Text style={styles.result}>{observacao} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Descrição:</Text>
-                <Text style={styles.result}>{descricao} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Descrição:</Text>
+                    <Text style={styles.result}>{descricao} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Ação Consciente:</Text>
-                <Text style={styles.result}>{acaoConsciente} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Ação Consciente:</Text>
+                    <Text style={styles.result}>{acaoConsciente} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Não Julgamento:</Text>
-                <Text style={styles.result}>{naoJulgamento} pontos</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Não Julgamento:</Text>
+                    <Text style={styles.result}>{naoJulgamento} pontos</Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>Não Reatividade:</Text>
-                <Text style={styles.result}>{naoReatividade} pontos</Text>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Não Reatividade:</Text>
+                    <Text style={styles.result}>{naoReatividade} pontos</Text>
+                </View>
             </View>
 
             <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
@@ -105,11 +107,17 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         color: "#444",
     },
+    resultsGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 12,
         padding: 16,
         marginBottom: 15,
+        width: "48%",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -117,8 +125,6 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     scrollArea: {
-        maxHeight: 300,
-        marginBottom: 15,
     },
     responseCard: {
         backgroundColor: "#fff",
