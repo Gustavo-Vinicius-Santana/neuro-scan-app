@@ -3,12 +3,15 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useQuestionStore } from "@/store/useFormDass";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
+import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function Question1() {
     const router = useRouter();
 
     const questionIndex = 0;
+
+    useSensorLogger("DASS", questionIndex + 1 , "accelerometer");
 
     const {
         perguntas,

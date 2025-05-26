@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useQuestionStore } from "@/store/useFormDass";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
 
 export default function ResultDass() {
     const { perguntas } = useQuestionStore();

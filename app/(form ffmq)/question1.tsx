@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useFfmqStore } from "@/store/useFormFfmq";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 import { useEffect, useRef } from "react";
 
 export default function FfmqQuestion1() {

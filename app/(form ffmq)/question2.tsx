@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useFfmqStore } from "@/store/useFormFfmq";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 
 export default function FFMQQuestion2() {
   const router = useRouter();

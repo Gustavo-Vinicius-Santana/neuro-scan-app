@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useCapcStore } from "@/store/useFormCapc";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
 
 export default function ResultCapc() {
     const { perguntas } = useCapcStore();

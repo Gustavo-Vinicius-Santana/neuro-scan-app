@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useEffect, useRef, useState } from "react";
-import { useQuestionStore } from "@/store/useFormDass";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
 
 export default function Question2() {
     const router = useRouter();

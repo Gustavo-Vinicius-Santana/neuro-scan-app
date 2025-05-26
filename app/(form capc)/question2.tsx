@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useCapcStore } from "@/store/useFormCapc";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
 
 export default function CAPCQuestion2() {
   const router = useRouter();

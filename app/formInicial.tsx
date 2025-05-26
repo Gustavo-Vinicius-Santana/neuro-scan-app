@@ -4,7 +4,7 @@ import { Text, View, StyleSheet } from "react-native";
 import { Accelerometer } from 'expo-sensors';
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import useInicialForm from "@/store/useInicialForm";
+import useInicialForm from "@/lib/stores/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";

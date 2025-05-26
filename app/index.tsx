@@ -1,8 +1,14 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { initializeDatabase } from "@/lib/database/initializeDatabase";
 
 export default function Index() {
     const router = useRouter();
+
+    useEffect(() => {
+        initializeDatabase();
+    }, []);
 
     const handleStart = () => {
         router.push("/sobre");
