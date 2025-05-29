@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useCapcStore } from "@/lib/stores/useFormCapc";
+import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function CAPCQuestion2() {
   const router = useRouter();
   
   const questionIndex = 1;
+
+  useSensorLogger("CAPAC", questionIndex + 1 , "accelerometer");
 
   const { perguntas, setResposta, incrementaClique, setTempo } = useCapcStore();
 

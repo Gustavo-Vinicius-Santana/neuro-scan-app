@@ -4,11 +4,14 @@ import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 import { useEffect, useRef } from "react";
+import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function FfmqQuestion1() {
   const router = useRouter();
 
   const questionIndex = 0;
+
+  useSensorLogger("FFMQ", questionIndex + 1 , "accelerometer");
 
   const { perguntas, setResposta, incrementaClique, setTempo } = useFfmqStore();
 

@@ -4,12 +4,15 @@ import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useEffect, useRef, useState } from "react";
 import { useQuestionStore } from "@/lib/stores/useFormDass";
+import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function Question2() {
     const router = useRouter();
     const { perguntas, setResposta, incrementaClique, setTempo } = useQuestionStore();
 
     const questionIndex = 1;
+
+    useSensorLogger("DASS", questionIndex + 1 , "accelerometer");
 
     const questionData = perguntas[questionIndex];
 
