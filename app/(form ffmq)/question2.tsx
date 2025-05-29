@@ -38,7 +38,7 @@ export default function FFMQQuestion2() {
         const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
   
-        router.push("/(form capc)/welcome");
+        router.replace("/(form capc)/welcome");
     };
 
   return (

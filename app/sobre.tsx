@@ -5,7 +5,7 @@ export default function Sobre() {
     const router = useRouter();
 
     function handlePress() {
-        router.push("/formInicial");
+        router.replace("/formInicial");
     }
 
     return (

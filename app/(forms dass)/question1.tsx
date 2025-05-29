@@ -44,7 +44,7 @@ export default function Question1() {
         const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.push("/(forms dass)/question2");
+        router.replace("/(forms dass)/question2");
     };
 
     return (

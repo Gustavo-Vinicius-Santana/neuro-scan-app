@@ -39,7 +39,7 @@ export default function CAPCQuestion2() {
       const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
       setTempo(questionIndex, elapsedSeconds);
 
-      router.push("/(results)/resultGeneral");
+      router.replace("/(results)/resultGeneral");
   };
 
   return (

@@ -11,7 +11,7 @@ export default function Index() {
     }, []);
 
     const handleStart = () => {
-        router.push("/sobre");
+        router.replace("/sobre");
     };
 
     return (
