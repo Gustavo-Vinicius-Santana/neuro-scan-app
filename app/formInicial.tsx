@@ -21,23 +21,22 @@ export default function FormInicial() {
 
   const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
-  const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
-
-  useEffect(() => {
-    Accelerometer.setUpdateInterval(200);
-
-    const subscription = Accelerometer.addListener(({ x, y, z }) => {
-      setAcceleration({ x: x ?? 0, y: y ?? 0, z: z ?? 0 });
-    });
-
-    return () => subscription.remove();
-  }, []);
-
-  const { x, y, z } = acceleration;
-
-  const onSubmit: SubmitHandler<FormData> = (data) => {
+  const goToDass: SubmitHandler<FormData> = (data) => {
     setFormData(data);
+  
     router.push("/(forms dass)/welcome");
+  };
+
+  const goToFfmq = () => {
+    router.push("/(form ffmq)/welcome");
+  };
+
+  const goToCapc = () => {
+    router.push("/(form capc)/welcome");
+  };
+
+  const goToResults = () => {
+    router.push("/(results)/resultGeneral");
   };
 
   return (
@@ -79,15 +78,29 @@ export default function FormInicial() {
         />
 
         <BtnForm         
-        title="Enviar"
-        onPress={handleSubmit(onSubmit)}
-        disabled={!isValid}/>
-      </View>
+          title="Ir para formulario Dass-21"
+          onPress={handleSubmit(goToDass)}
+          disabled={!isValid}
+        />
 
-      <View style={{ marginTop: 20 }}>
-        <Text>Aceleração X: {x.toFixed(3)}</Text>
-        <Text>Aceleração Y: {y.toFixed(3)}</Text>
-        <Text>Aceleração Z: {z.toFixed(3)}</Text>
+        <BtnForm         
+          title="Ir para formulario FFMQ"
+          onPress={handleSubmit(goToFfmq)}
+          disabled={!isValid}
+        />
+
+        <BtnForm         
+          title="Ir para formulario Capc"
+          onPress={handleSubmit(goToCapc)}
+          disabled={!isValid}
+        />
+
+        <BtnForm         
+          title="Ir para resultados"
+          onPress={handleSubmit(goToResults)}
+          disabled={!isValid}
+        />
+
       </View>
     </View>
   );
