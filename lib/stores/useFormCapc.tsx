@@ -3,6 +3,7 @@ import { create } from 'zustand';
 type PerguntaFfmq = {
   resposta: number | null;
   tempo: number;
+  tempoResposta: number;
   cliqueResposta1: number;
   cliqueResposta2: number;
   cliqueResposta3: number;
@@ -15,6 +16,7 @@ type FfmqStoreState = {
   setResposta: (index: number, resposta: number) => void;
   incrementaClique: (index: number, resposta: number) => void;
   setTempo: (index: number, tempo: number) => void;
+  setTempoResposta: (index: number, tempoResposta: number) => void;
   reset: () => void;
 };
 
@@ -23,6 +25,7 @@ const TOTAL_PERGUNTAS_FFMQ = 22;
 const perguntaInicialFfmq: PerguntaFfmq = {
   resposta: null,
   tempo: 0,
+  tempoResposta: 0,
   cliqueResposta1: 0,
   cliqueResposta2: 0,
   cliqueResposta3: 0,
@@ -34,6 +37,14 @@ export const useCapcStore = create<FfmqStoreState>((set) => ({
   perguntas: Array(TOTAL_PERGUNTAS_FFMQ)
     .fill(null)
     .map(() => ({ ...perguntaInicialFfmq })),
+
+  setTempoResposta: (index, tempoResposta) => {
+    set((state) => {
+      const perguntas = [...state.perguntas];
+      perguntas[index] = { ...perguntas[index], tempoResposta };
+      return { perguntas };
+    });
+  },
 
   setResposta: (index, resposta) => {
     set((state) => {
