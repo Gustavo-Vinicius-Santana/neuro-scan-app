@@ -7,43 +7,65 @@ import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function FFMQQuestion2() {
-  const router = useRouter();
+    const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
+    const router = useRouter();
 
-  const questionIndex = 1;
-  
-  useSensorLogger("FFMQ", questionIndex + 1 , "accelerometer");
+    const {
+        perguntas,
+        setResposta,
+        incrementaClique,
+        setTempo,
+        setTempoResposta,
+    } = useFfmqStore();
 
-  const { perguntas, setResposta, incrementaClique, setTempo } = useFfmqStore();
+    const questionIndex = 1;
+    const questionData = perguntas[questionIndex];
 
-  const questionData = perguntas[questionIndex];
+    useSensorLogger("FFMQ", questionIndex + 1 , "accelerometer");
+    useSensorLogger("FFMQ", questionIndex + 1 , "gyroscope");
 
-  const options = [
-    { id: 1, label: "1 - Nunca" },
-    { id: 2, label: "2 - Às vezes" },
-    { id: 3, label: "3 - Não tenho certeza" },
-    { id: 4, label: "4 - Normalmente verdadeiro" },
-    { id: 5, label: "5 - Quase sempre ou sempre verdadeiro" },
-  ];
+    const startTime = useRef<number | null>(null);
 
-  const handleAnswer = (value: number) => {
-    setResposta(questionIndex, value);
-    incrementaClique(questionIndex, value);
-
-  };
-
-    const startTimeRef = useRef<number>(0);
-  
     useEffect(() => {
-        startTimeRef.current = Date.now();
+        startTime.current = Date.now();
     }, []);
-  
+
+    const getElapsedSeconds = () => {
+        if (!startTime.current) return 0;
+        const ms = Date.now() - startTime.current;
+        return Math.round((ms / 1000) * 100) / 100;
+    };
+
+    const handleAnswer = (value: number) => {
+        const elapsedSeconds = getElapsedSeconds();
+
+        setResposta(questionIndex, value);
+
+        if (!tempoRespostaRegistrado) {
+            setTempoResposta(questionIndex, elapsedSeconds);
+            setTempoRespostaRegistrado(true);
+            console.log("Tempo da resposta registrado (s):", elapsedSeconds);
+        }
+
+        incrementaClique(questionIndex, value);
+    };
+
     const handleNext = () => {
-        const endTime = Date.now();
-        const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
+      if (startTime.current === null) return;
+      
+        const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
-  
+
         router.replace("/(form capc)/welcome");
     };
+
+    const options = [
+      { id: 1, label: "1 - Nunca" },
+      { id: 2, label: "2 - Às vezes" },
+      { id: 3, label: "3 - Não tenho certeza" },
+      { id: 4, label: "4 - Normalmente verdadeiro" },
+      { id: 5, label: "5 - Quase sempre ou sempre verdadeiro" },
+    ];
 
   return (
     <View style={styles.container}>

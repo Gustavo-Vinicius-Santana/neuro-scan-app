@@ -59,6 +59,9 @@ export default function ResultCapc() {
                             Resposta: {pergunta.resposta !== null ? pergunta.resposta : "Não respondido"}
                         </Text>
                         <Text style={styles.detail}>
+                            Tempo resposta: {pergunta.tempoResposta ? `${pergunta.tempoResposta} segundos` : "N/A"}
+                        </Text>
+                        <Text style={styles.detail}>
                             Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}
                         </Text>
                         <Text style={styles.detail}>

@@ -39,10 +39,10 @@ export function useSensorLogger(
     let subscription: any;
 
     if (sensor === "accelerometer") {
-      Accelerometer.setUpdateInterval(1000); // 1 segundo
+      Accelerometer.setUpdateInterval(100); // 0,10 segundos
       subscription = Accelerometer.addListener(handleSensorData);
     } else if (sensor === "gyroscope") {
-      Gyroscope.setUpdateInterval(1000);
+      Gyroscope.setUpdateInterval(100);
       subscription = Gyroscope.addListener(handleSensorData);
     }
 

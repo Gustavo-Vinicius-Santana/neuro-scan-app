@@ -7,15 +7,57 @@ import { useCapcStore } from "@/lib/stores/useFormCapc";
 import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
 
 export default function CAPCQuestion1() {
-  const router = useRouter();
+    const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
+    const router = useRouter();
 
-  const questionIndex = 0;
-  
-  useSensorLogger("CAPAC", questionIndex + 1 , "accelerometer");
+    const {
+        perguntas,
+        setResposta,
+        incrementaClique,
+        setTempo,
+        setTempoResposta,
+    } = useCapcStore();
 
-  const { perguntas, setResposta, incrementaClique, setTempo } = useCapcStore();
+    const questionIndex = 0;
+    const questionData = perguntas[questionIndex];
 
-  const questionData = perguntas[questionIndex];
+    useSensorLogger("CAPC", questionIndex + 1 , "accelerometer");
+    useSensorLogger("CAPC", questionIndex + 1 , "gyroscope");
+
+    const startTime = useRef<number | null>(null);
+
+    useEffect(() => {
+        startTime.current = Date.now();
+    }, []);
+
+    const getElapsedSeconds = () => {
+        if (!startTime.current) return 0;
+        const ms = Date.now() - startTime.current;
+        return Math.round((ms / 1000) * 100) / 100;
+    };
+
+    const handleAnswer = (value: number) => {
+        const elapsedSeconds = getElapsedSeconds();
+
+        setResposta(questionIndex, value);
+
+        if (!tempoRespostaRegistrado) {
+            setTempoResposta(questionIndex, elapsedSeconds);
+            setTempoRespostaRegistrado(true);
+            console.log("Tempo da resposta registrado (s):", elapsedSeconds);
+        }
+
+        incrementaClique(questionIndex, value);
+    };
+
+    const handleNext = () => {
+      if (startTime.current === null) return;
+      
+        const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
+        setTempo(questionIndex, elapsedSeconds);
+
+        router.replace("/question2");
+    };
 
   const options = [
     { id: 1, label: "1 - Nunca" },
@@ -24,26 +66,6 @@ export default function CAPCQuestion1() {
     { id: 4, label: "4 - Frequentemente" },
     { id: 5, label: "5 - Sempre" },
   ];
-
-  const handleAnswer = (value: number) => {
-    setResposta(questionIndex, value);
-    incrementaClique(questionIndex, value);
-
-  };
-
-  const startTimeRef = useRef<number>(0);
-
-  useEffect(() => {
-      startTimeRef.current = Date.now();
-  }, []);
-
-  const handleNext = () => {
-      const endTime = Date.now();
-      const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
-      setTempo(questionIndex, elapsedSeconds);
-
-      router.replace("/question2");
-  };
 
   return (
     <View style={styles.container}>
