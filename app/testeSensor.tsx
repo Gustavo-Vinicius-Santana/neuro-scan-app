@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { useRouter } from "expo-router";
+import { Accelerometer, Gyroscope } from "expo-sensors";
 
-export default function Sobre() {
+export default function TesteSensor() {
     const router = useRouter();
 
     const [accData, setAccData] = useState({ x: 0, y: 0, z: 0 });
     const [gyroData, setGyroData] = useState({ alpha: 0, beta: 0, gamma: 0 });
+
+    const [mobileAcc, setMobileAcc] = useState({ x: 0, y: 0, z: 0 });
+    const [mobileGyro, setMobileGyro] = useState({ x: 0, y: 0, z: 0 });
 
     useEffect(() => {
         if (Platform.OS === "web" && typeof window !== "undefined") {
@@ -35,6 +39,17 @@ export default function Sobre() {
                 window.removeEventListener("devicemotion", handleMotion);
                 window.removeEventListener("deviceorientation", handleOrientation);
             };
+        } else {
+            const accSub = Accelerometer.addListener(data => setMobileAcc(data));
+            const gyroSub = Gyroscope.addListener(data => setMobileGyro(data));
+
+            Accelerometer.setUpdateInterval(500);
+            Gyroscope.setUpdateInterval(500);
+
+            return () => {
+                accSub.remove();
+                gyroSub.remove();
+            };
         }
     }, []);
 
@@ -44,19 +59,33 @@ export default function Sobre() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>teste sensores</Text>
+            <Text style={styles.title}>Teste Sensores</Text>
 
-            <View style={styles.card}>
-                <Text style={styles.sectionTitle}>Sensores em tempo real (web)</Text>
-                <Text style={styles.paragraph}>
-                    <Text style={{ fontWeight: "bold" }}>Acelerômetro:</Text> {"\n"}
-                    X: {accData.x.toFixed(2)} | Y: {accData.y.toFixed(2)} | Z: {accData.z.toFixed(2)}
-                </Text>
-                <Text style={styles.paragraph}>
-                    <Text style={{ fontWeight: "bold" }}>Orientação:</Text> {"\n"}
-                    Alpha: {gyroData.alpha.toFixed(2)}° | Beta: {gyroData.beta.toFixed(2)}° | Gamma: {gyroData.gamma.toFixed(2)}°
-                </Text>
-            </View>
+            {Platform.OS === "web" ? (
+                <View style={styles.card}>
+                    <Text style={styles.sectionTitle}>Sensores em tempo real (Web)</Text>
+                    <Text style={styles.paragraph}>
+                        <Text style={{ fontWeight: "bold" }}>Acelerômetro:</Text> {"\n"}
+                        X: {accData.x.toFixed(2)} | Y: {accData.y.toFixed(2)} | Z: {accData.z.toFixed(2)}
+                    </Text>
+                    <Text style={styles.paragraph}>
+                        <Text style={{ fontWeight: "bold" }}>Orientação:</Text> {"\n"}
+                        Alpha: {gyroData.alpha.toFixed(2)}° | Beta: {gyroData.beta.toFixed(2)}° | Gamma: {gyroData.gamma.toFixed(2)}°
+                    </Text>
+                </View>
+            ) : (
+                <View style={styles.card}>
+                    <Text style={styles.sectionTitle}>Sensores em tempo real (Mobile)</Text>
+                    <Text style={styles.paragraph}>
+                        <Text style={{ fontWeight: "bold" }}>Acelerômetro:</Text> {"\n"}
+                        X: {mobileAcc.x.toFixed(2)} | Y: {mobileAcc.y.toFixed(2)} | Z: {mobileAcc.z.toFixed(2)}
+                    </Text>
+                    <Text style={styles.paragraph}>
+                        <Text style={{ fontWeight: "bold" }}>Giroscópio:</Text> {"\n"}
+                        X: {mobileGyro.x.toFixed(2)} | Y: {mobileGyro.y.toFixed(2)} | Z: {mobileGyro.z.toFixed(2)}
+                    </Text>
+                </View>
+            )}
 
             <TouchableOpacity style={styles.button} onPress={handlePress}>
                 <Text style={styles.buttonText}>Vamos lá</Text>

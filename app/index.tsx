@@ -9,7 +9,7 @@ export default function Index() {
     const router = useRouter();
 
     const handleStart = () => {
-        router.replace("/sobre");
+        router.replace("/testeSensor");
     };
 
     useEffect(() => {
