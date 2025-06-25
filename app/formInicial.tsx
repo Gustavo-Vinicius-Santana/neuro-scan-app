@@ -42,26 +42,27 @@ export default function FormInicial() {
   return (
     <View style={styles.container}>
 
-      <Text style={styles.pageTitle}>Formulário Inicial</Text>
+      <Text style={styles.pageTitle}>Cadastro</Text>
 
       <View style={{ width: "100%", maxWidth: 500 }}>
 
       <InputText
         label="Nome"
-        placeholder="Seu nome"
+        placeholder="Nome"
         name="name"
         control={control}
         rules={{ required: true }}
+        iconName="person"
       />
 
-      <InputNumber
-        label="Idade"
-        placeholder="Sua idade"
-        name="age"
-        control={control}
-        rules={{ required: true }}
-        
-      />
+        <InputNumber
+          label="Idade"
+          placeholder="Sua idade"
+          name="age"
+          control={control}
+          rules={{ required: true }}
+          iconName="calendar"
+        />
 
         <InputText
           label="Email"
@@ -75,32 +76,34 @@ export default function FormInicial() {
               message: "Digite um email válido",
             },
           }}
+          iconName="mail"
         />
 
-        <BtnForm         
-          title="Ir para formulario Dass-21"
-          onPress={handleSubmit(goToDass)}
-          disabled={!isValid}
-        />
+          <View style={{alignItems: "center"}}>
+            <BtnForm         
+              title="Ir para formulario Dass-21"
+              onPress={handleSubmit(goToDass)}
+              disabled={!isValid}
+            />
 
-        <BtnForm         
-          title="Ir para formulario FFMQ"
-          onPress={handleSubmit(goToFfmq)}
-          disabled={!isValid}
-        />
+            <BtnForm         
+              title="Ir para formulario FFMQ"
+              onPress={handleSubmit(goToFfmq)}
+              disabled={!isValid}
+            />
 
-        <BtnForm         
-          title="Ir para formulario Capc"
-          onPress={handleSubmit(goToCapc)}
-          disabled={!isValid}
-        />
+            <BtnForm         
+              title="Ir para formulario Capc"
+              onPress={handleSubmit(goToCapc)}
+              disabled={!isValid}
+            />
 
-        <BtnForm         
-          title="Ir para resultados"
-          onPress={handleSubmit(goToResults)}
-          disabled={!isValid}
-        />
-
+            <BtnForm         
+              title="Ir para resultados"
+              onPress={handleSubmit(goToResults)}
+              disabled={!isValid}
+          />
+        </View>
       </View>
     </View>
   );
@@ -115,11 +118,11 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   pageTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 30,
-    textAlign: "center",
+      fontSize: 24,
+      fontWeight: "bold",
+      color: "#0033A0",
+      marginBottom: 30,
+      textAlign: "center",
   },
   button: {
     backgroundColor: "#007BFF",

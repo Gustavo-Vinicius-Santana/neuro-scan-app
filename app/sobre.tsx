@@ -39,31 +39,15 @@ export default function Sobre() {
     }, []);
 
     function handlePress() {
-        router.replace("/formInicial");
+        router.replace("/termoParticipacao");
     }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Neuro Scan</Text>
+            <Text style={styles.title}>teste sensores</Text>
 
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>O que é?</Text>
-                <Text style={styles.paragraph}>
-                    O Neuro Scan é um app criado para ajudar você a acompanhar e entender seus níveis de estresse de forma rápida e prática.
-                    Ele usa formulários reconhecidos (CAPC, FFMQ e DASS) para avaliar seu bem-estar mental.
-                </Text>
-            </View>
-
-            <View style={styles.card}>
-                <Text style={styles.sectionTitle}>Por que usar?</Text>
-                <Text style={styles.paragraph}>
-                    Ao utilizar o Neuro Scan, você tem uma visão clara sobre seu estado emocional, podendo detectar sinais de estresse e ansiedade.
-                    É uma ferramenta simples que incentiva o autocuidado e a saúde mental contínua.
-                </Text>
-            </View>
-
-            <View style={styles.card}>
-                <Text style={styles.sectionTitle}>Sensores em tempo real</Text>
+                <Text style={styles.sectionTitle}>Sensores em tempo real (web)</Text>
                 <Text style={styles.paragraph}>
                     <Text style={{ fontWeight: "bold" }}>Acelerômetro:</Text> {"\n"}
                     X: {accData.x.toFixed(2)} | Y: {accData.y.toFixed(2)} | Z: {accData.z.toFixed(2)}
