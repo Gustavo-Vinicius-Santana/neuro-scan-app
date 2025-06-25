@@ -11,7 +11,7 @@ interface FormState {
   setFormData: (data: Partial<FormData>) => void;
 }
 
-const useForm = create<FormState>((set) => ({
+const useInicialForm = create<FormState>((set) => ({
   formData: {
     name: "",
     age: "",
@@ -21,4 +21,4 @@ const useForm = create<FormState>((set) => ({
     set((state) => ({ formData: { ...state.formData, ...data } })),
 }));
 
-export default useForm;
+export default useInicialForm;

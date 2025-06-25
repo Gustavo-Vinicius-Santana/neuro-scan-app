@@ -1,124 +1,93 @@
-import { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import { Accelerometer } from 'expo-sensors';
+import { useEffect } from "react";
+import { initializeDatabase } from "@/lib/database/initializeDatabase";
 
-import useForm from "@/store/useForm";
+const { width, height } = Dimensions.get("window");
 
 export default function Index() {
-  const router = useRouter();
-  const { setFormData } = useForm();
+    const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
+    const handleStart = () => {
+        router.replace("/testeSensor");
+    };
 
-  const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
+    useEffect(() => {
+        initializeDatabase();
+    }, []);
 
-  useEffect(() => {
-    Accelerometer.setUpdateInterval(200);
+    return (
+        <View style={styles.container}>
+            <Text style={styles.logo}>neuroscan</Text>
+            
+            <View style={styles.welcomeContainer}>
+                <Text style={styles.title}>Seja{"\n"}bem vindo!</Text>
+            </View>
 
-    const subscription = Accelerometer.addListener(({ x, y, z }) => {
-      setAcceleration({ x: x ?? 0, y: y ?? 0, z: z ?? 0 });
-    });
-
-    return () => subscription.remove();
-  }, []);
-
-  const { x, y, z } = acceleration;
-
-  function handleSubmit() {
-    const data = { name, age, email };
-    setFormData(data);
-    router.push("/result");
-  }
-
-  return (
-    <View style={styles.container}>
-      {/* Adicionado estilo de largura total aqui */}
-      <View style={{ width: "100%", maxWidth: 500 }}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your name"
-            placeholderTextColor="#aaa"
-            onChangeText={setName}
-          />
+            <View style={styles.bottomCurve}>
+                <View style={styles.curveBackground}>
+                    <TouchableOpacity style={styles.button} onPress={handleStart}>
+                        <Text style={styles.buttonText}>Vamos lá!</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Age:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your age"
-            placeholderTextColor="#aaa"
-            keyboardType="numeric"
-            onChangeText={setAge}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your email"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{ marginTop: 20 }}>
-        <Text>Aceleração X: {x.toFixed(3)}</Text>
-        <Text>Aceleração Y: {y.toFixed(3)}</Text>
-        <Text>Aceleração Z: {z.toFixed(3)}</Text>
-      </View>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f4f4f4",
-    alignItems: "center",
-    padding: 20,
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "#fff",
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    width: "100%",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+    container: {
+        flex: 1,
+        backgroundColor: "#0033A0",
+    },
+    logo: {
+        position: 'absolute',
+        top: height * 0.12,
+        alignSelf: 'center',
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#fff",
+        textTransform: "uppercase",
+    },
+    welcomeContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: height * 0.25,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: "bold",
+        color: "#fff",
+        textAlign: "center",
+        lineHeight: 40,
+    },
+    bottomCurve: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: height * 0.35,
+        overflow: 'hidden',
+    },
+    curveBackground: {
+        backgroundColor: '#fff',
+        width: '100%',
+        height: '100%',
+        borderTopLeftRadius: width * 0.25,
+        borderTopRightRadius: width * 0.25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 30,
+    },
+    button: {
+        backgroundColor: "#0033A0",
+        paddingVertical: 15,
+        paddingHorizontal: 50,
+        borderRadius: 30,
+    },
+    buttonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
 });
