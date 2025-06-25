@@ -23,12 +23,11 @@ export default function Question39() {
     const questionIndex = 38;
     const questionData = perguntas[questionIndex];
 
-    if (Platform.OS === "web") {
-      useSensorLoggerWeb("CAPC", questionIndex + 1);
-    } else {
-      useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
-      useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
-    }
+
+    useSensorLoggerWeb("CAPC", questionIndex + 1);
+    useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
+    useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
+
 
     const startTime = useRef<number | null>(null);
 

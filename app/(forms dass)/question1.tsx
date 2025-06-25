@@ -23,12 +23,9 @@ export default function Question1() {
     const questionIndex = 0;
     const questionData = perguntas[questionIndex];
 
-    if (Platform.OS === "web") {
-      useSensorLoggerWeb("CAPC", questionIndex + 1);
-    } else {
-      useSensorLoggerMobile("DASS", questionIndex + 1, "accelerometer");
-      useSensorLoggerMobile("DASS", questionIndex + 1, "gyroscope");
-    }
+    useSensorLoggerWeb("CAPC", questionIndex + 1);
+    useSensorLoggerMobile("DASS", questionIndex + 1, "accelerometer");
+    useSensorLoggerMobile("DASS", questionIndex + 1, "gyroscope");
 
     const startTime = useRef<number | null>(null);
 

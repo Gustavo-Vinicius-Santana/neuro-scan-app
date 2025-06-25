@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { initDatabase } from "../database/db";
-
-interface SensorData {
-  x: number;
-  y: number;
-}
+import { Platform } from "react-native";
 
 export function useSensorLoggerWeb(formulario: string, numeroPergunta: number) {
   useEffect(() => {
+    if (Platform.OS !== "web") return;
+
     let isCancelled = false;
 
     const insertData = async (x: number, y: number) => {
@@ -24,9 +22,10 @@ export function useSensorLoggerWeb(formulario: string, numeroPergunta: number) {
     };
 
     const handle = (e: DeviceMotionEvent) => {
-      if (!e.acceleration) return;
-      const x = e.acceleration.x ?? 0;
-      const y = e.acceleration.y ?? 0;
+      const acc = e.accelerationIncludingGravity;
+      if (!acc) return;
+      const x = acc.x ?? 0;
+      const y = acc.y ?? 0;
       insertData(x, y);
     };
 

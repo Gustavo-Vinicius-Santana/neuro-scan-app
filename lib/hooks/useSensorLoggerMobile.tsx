@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Accelerometer, Gyroscope } from "expo-sensors";
 import { initDatabase } from "../database/db";
+import { Platform } from "react-native";
 
 type SensorType = "accelerometer" | "gyroscope";
 
@@ -16,6 +17,11 @@ export function useSensorLoggerMobile(
   sensor: SensorType
 ) {
   useEffect(() => {
+    if (Platform.OS === "web") {
+      // Não roda sensor mobile na web
+      return;
+    }
+
     let isCancelled = false;
     let subscription: any;
 

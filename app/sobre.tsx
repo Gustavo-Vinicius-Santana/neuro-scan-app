@@ -1,8 +1,42 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function Sobre() {
     const router = useRouter();
+
+    const [accData, setAccData] = useState({ x: 0, y: 0, z: 0 });
+    const [gyroData, setGyroData] = useState({ alpha: 0, beta: 0, gamma: 0 });
+
+    useEffect(() => {
+        if (Platform.OS === "web" && typeof window !== "undefined") {
+            const handleMotion = (event: DeviceMotionEvent) => {
+                if (event.accelerationIncludingGravity) {
+                    setAccData({
+                        x: event.accelerationIncludingGravity.x || 0,
+                        y: event.accelerationIncludingGravity.y || 0,
+                        z: event.accelerationIncludingGravity.z || 0,
+                    });
+                }
+            };
+
+            const handleOrientation = (event: DeviceOrientationEvent) => {
+                setGyroData({
+                    alpha: event.alpha || 0,
+                    beta: event.beta || 0,
+                    gamma: event.gamma || 0,
+                });
+            };
+
+            window.addEventListener("devicemotion", handleMotion);
+            window.addEventListener("deviceorientation", handleOrientation);
+
+            return () => {
+                window.removeEventListener("devicemotion", handleMotion);
+                window.removeEventListener("deviceorientation", handleOrientation);
+            };
+        }
+    }, []);
 
     function handlePress() {
         router.replace("/formInicial");
@@ -25,6 +59,18 @@ export default function Sobre() {
                 <Text style={styles.paragraph}>
                     Ao utilizar o Neuro Scan, você tem uma visão clara sobre seu estado emocional, podendo detectar sinais de estresse e ansiedade.
                     É uma ferramenta simples que incentiva o autocuidado e a saúde mental contínua.
+                </Text>
+            </View>
+
+            <View style={styles.card}>
+                <Text style={styles.sectionTitle}>Sensores em tempo real</Text>
+                <Text style={styles.paragraph}>
+                    <Text style={{ fontWeight: "bold" }}>Acelerômetro:</Text> {"\n"}
+                    X: {accData.x.toFixed(2)} | Y: {accData.y.toFixed(2)} | Z: {accData.z.toFixed(2)}
+                </Text>
+                <Text style={styles.paragraph}>
+                    <Text style={{ fontWeight: "bold" }}>Orientação:</Text> {"\n"}
+                    Alpha: {gyroData.alpha.toFixed(2)}° | Beta: {gyroData.beta.toFixed(2)}° | Gamma: {gyroData.gamma.toFixed(2)}°
                 </Text>
             </View>
 
@@ -63,6 +109,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#333",
         lineHeight: 22,
+        marginBottom: 10,
     },
     button: {
         backgroundColor: "#007BFF",
