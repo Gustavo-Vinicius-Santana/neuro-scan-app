@@ -23,14 +23,14 @@ export default function OptionGroup({ options, selected, onSelect }: Props) {
             key={option.id}
             style={[
               styles.option,
-              isSelected ? styles.optionSelected : {},
+              isSelected && styles.optionSelected,
             ]}
             onPress={() => onSelect(option.id)}
           >
             <View style={styles.checkboxContainer}>
               <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
                 {isSelected && (
-                  <Ionicons name="checkmark" size={16} color="#fff" />
+                  <Ionicons name="checkmark" size={12} color="#fff" />
                 )}
               </View>
               <Text style={styles.optionText}>{option.label}</Text>
@@ -46,16 +46,13 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 12,
+    backgroundColor: "rgba(0, 123, 255, 0.08)", // azul claro com opacidade
   },
   optionSelected: {
-    borderColor: "#007BFF",
-    backgroundColor: "#e6f0ff",
+    backgroundColor: "rgba(0, 123, 255, 0.18)", // um pouco mais escuro ao selecionar
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -64,21 +61,20 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 20,
     height: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    marginRight: 10,
+    borderWidth: 2,
+    borderColor: "#007BFF",
+    borderRadius: 10, // circular
+    marginRight: 12,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
   },
   checkboxChecked: {
-    borderColor: "#007BFF",
     backgroundColor: "#007BFF",
   },
   optionText: {
     fontSize: 16,
-    color: "#333",
+    color: "#0056b3", // azul mais escuro para o texto
     flexShrink: 1,
   },
 });

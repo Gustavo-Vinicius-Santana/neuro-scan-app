@@ -105,5 +105,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
+    color: "#0056b3",
   },
 });
