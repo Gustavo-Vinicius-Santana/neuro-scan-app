@@ -4,8 +4,11 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{headerShown: false}}/>
-      <Stack.Screen name="sobre" options={{headerShown: false}}/>
+      <Stack.Screen name="testeSensor" options={{headerShown: false}}/>
       <Stack.Screen name="formInicial" options={{headerShown: false}}/>
+
+      <Stack.Screen name="termoParticipacao" options={{headerShown: false}}/>
+      <Stack.Screen name="termoSensores" options={{headerShown: false}}/>
 
       <Stack.Screen name="(form capc)" options={{headerShown: false}}/>
       <Stack.Screen name="(form ffmq)" options={{headerShown: false}}/>
