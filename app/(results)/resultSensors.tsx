@@ -9,6 +9,7 @@ interface SensorRecord {
   sensor: string;
   eixo_x: number;
   eixo_y: number;
+  eixo_z: number;
 }
 
 export default function ResultSensors() {
@@ -20,7 +21,6 @@ export default function ResultSensors() {
         const db = await initDatabase();
 
         if (isWeb) {
-          // sql.js: usa exec que retorna um array com colunas e valores
           const res = db.exec("SELECT * FROM sensor_data ORDER BY id DESC");
           if (res.length > 0) {
             const { columns, values } = res[0];
@@ -36,7 +36,6 @@ export default function ResultSensors() {
             setDados([]);
           }
         } else {
-          // expo-sqlite: usa withTransactionAsync e getAllAsync
           await db.withTransactionAsync(async () => {
             const result = await db.getAllAsync(
               "SELECT * FROM sensor_data ORDER BY id DESC"
@@ -60,11 +59,12 @@ export default function ResultSensors() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
+            <Text style={styles.text}>Formulário: {item.formulario}</Text>
+            <Text style={styles.text}>Pergunta: {item.numero_pergunta}</Text>
+            <Text style={styles.text}>Sensor: {item.sensor.toUpperCase()}</Text>
             <Text style={styles.text}>
-              Pergunta {item.numero_pergunta} | {item.sensor.toUpperCase()}
-            </Text>
-            <Text style={styles.text}>
-              X: {item.eixo_x.toFixed(2)} | Y: {item.eixo_y.toFixed(2)}
+              X: {item.eixo_x.toFixed(2)} | Y: {item.eixo_y.toFixed(2)} | Z:{" "}
+              {item.eixo_z?.toFixed(2) ?? "0.00"}
             </Text>
           </View>
         )}

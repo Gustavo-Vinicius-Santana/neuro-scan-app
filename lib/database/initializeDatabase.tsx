@@ -5,7 +5,7 @@ export async function initializeDatabase() {
 
   try {
     if (isWeb) {
-      // sql.js: comandos síncronos, sem async/await
+      // sql.js: comandos síncronos
       db.run(`DROP TABLE IF EXISTS sensor_data;`);
       db.run(`
         CREATE TABLE sensor_data (
@@ -14,12 +14,13 @@ export async function initializeDatabase() {
           numero_pergunta INTEGER,
           sensor TEXT,
           eixo_x REAL,
-          eixo_y REAL
+          eixo_y REAL,
+          eixo_z REAL
         );
       `);
       console.log("Tabela sensor_data criada com sucesso (Web).");
     } else {
-      // expo-sqlite: usar withTransactionAsync e runAsync
+      // expo-sqlite: comandos assíncronos
       await db.withTransactionAsync(async () => {
         await db.runAsync(`DROP TABLE IF EXISTS sensor_data;`);
         await db.runAsync(`
@@ -29,7 +30,8 @@ export async function initializeDatabase() {
             numero_pergunta INTEGER,
             sensor TEXT,
             eixo_x REAL,
-            eixo_y REAL
+            eixo_y REAL,
+            eixo_z REAL
           );
         `);
       });

@@ -25,20 +25,22 @@ export function useSensorLoggerMobile(
     let isCancelled = false;
     let subscription: any;
 
-    const insertData = async (x: number, y: number) => {
+    const insertData = async (x: number, y: number, z: number) => {
       if (isCancelled) return;
       try {
         const db = await initDatabase();
         await db.runAsync(
-          `INSERT INTO sensor_data (formulario, numero_pergunta, sensor, eixo_x, eixo_y) VALUES (?, ?, ?, ?, ?)`,
-          [formulario, numeroPergunta, sensor, x, y]
+          `INSERT INTO sensor_data (formulario, numero_pergunta, sensor, eixo_x, eixo_y, eixo_z) VALUES (?, ?, ?, ?, ?, ?)`,
+          [formulario, numeroPergunta, sensor, x, y, z]
         );
       } catch (err) {
         console.error("Erro ao inserir no banco (mobile):", err);
       }
     };
 
-    const handle = (data: SensorData) => insertData(data.x, data.y);
+    const handle = (data: SensorData) => {
+      insertData(data.x, data.y, data.z);
+    };
 
     if (sensor === "accelerometer") {
       Accelerometer.setUpdateInterval(100);
