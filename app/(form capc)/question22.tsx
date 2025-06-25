@@ -8,7 +8,7 @@ import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { Platform } from "react-native";
 
-export default function CAPCQuestion2() {
+export default function Question22() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
 
@@ -20,7 +20,7 @@ export default function CAPCQuestion2() {
         setTempoResposta,
     } = useCapcStore();
 
-    const questionIndex = 1;
+    const questionIndex = 21;
     const questionData = perguntas[questionIndex];
 
     if (Platform.OS === "web") {
@@ -76,7 +76,7 @@ export default function CAPCQuestion2() {
   return (
     <View style={styles.container}>
       <Text style={styles.question}>
-        2. Olhar para um problema de um ângulo diferente pode levar a uma solução.
+        22. Posso perder completamente a noção do tempo se trabalho intensivamente.
       </Text>
 
       <OptionGroup

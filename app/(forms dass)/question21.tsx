@@ -1,14 +1,14 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useFfmqStore } from "@/lib/stores/useFormFfmq";
+import { useEffect, useRef, useState } from "react";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
 import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { Platform } from "react-native";
 
-export default function FFMQQuestion2() {
+export default function Question21() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
 
@@ -18,7 +18,7 @@ export default function FFMQQuestion2() {
         incrementaClique,
         setTempo,
         setTempoResposta,
-    } = useFfmqStore();
+    } = useQuestionStore();
 
     const questionIndex = 1;
     const questionData = perguntas[questionIndex];
@@ -26,8 +26,8 @@ export default function FFMQQuestion2() {
     if (Platform.OS === "web") {
       useSensorLoggerWeb("CAPC", questionIndex + 1);
     } else {
-      useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
-      useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
+      useSensorLoggerMobile("DASS", questionIndex + 1, "accelerometer");
+      useSensorLoggerMobile("DASS", questionIndex + 1, "gyroscope");
     }
 
     const startTime = useRef<number | null>(null);
@@ -57,56 +57,53 @@ export default function FFMQQuestion2() {
     };
 
     const handleNext = () => {
-      if (startTime.current === null) return;
-      
+        if (startTime.current === null) return;
+
         const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.replace("/(form capc)/welcome");
+        router.replace("/(form ffmq)/welcome");
     };
 
     const options = [
-      { id: 1, label: "1 - Nunca" },
-      { id: 2, label: "2 - Às vezes" },
-      { id: 3, label: "3 - Não tenho certeza" },
-      { id: 4, label: "4 - Normalmente verdadeiro" },
-      { id: 5, label: "5 - Quase sempre ou sempre verdadeiro" },
+        { id: 1, label: "1 - Não aconteceu comigo essa semana" },
+        { id: 2, label: "2 - Aconteceu comigo algumas vezes na semana" },
+        { id: 3, label: "3 - Aconteceu comigo boa parte da semana" },
     ];
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.question}>
-        2. Sou bom para encontrar palavras que descrevam os meus sentimentos.
-      </Text>
+    return (
+        <View style={styles.container}>
+            <Text style={styles.question}>
+                21. Senti que a vida não tinha sentido.
+            </Text>
+            <OptionGroup
+                options={options}
+                selected={questionData.resposta}
+                onSelect={(id) => {
+                    handleAnswer(id);
+                }}
+            />
 
-      <OptionGroup
-        options={options}
-        selected={questionData.resposta}
-        onSelect={(id) => {
-          handleAnswer(id);
-        }}
-      />
-
-      <BtnForm
-        title="Finalizar form capc"
-        onPress={handleNext}
-        disabled={questionData.resposta === null}
-        color="#10B981"
-      />
-    </View>
-  );
+            <BtnForm
+                title="Finalizar Dass-21"
+                color="#4F46E5"
+                onPress={handleNext}
+                disabled={questionData.resposta === null}
+            />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-  },
-  question: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 30,
-  },
+    container: {
+        flex: 1,
+        padding: 20,
+        justifyContent: "center",
+    },
+    question: {
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        marginBottom: 30,
+    },
 });

@@ -8,7 +8,7 @@ import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { Platform } from "react-native";
 
-export default function CAPCQuestion1() {
+export default function Question1() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
 
@@ -62,7 +62,7 @@ export default function CAPCQuestion1() {
         const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.replace("/question2");
+        router.replace("/question22");
     };
 
   const options = [

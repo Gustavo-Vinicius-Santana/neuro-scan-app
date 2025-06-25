@@ -62,7 +62,7 @@ export default function Question1() {
         const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.replace("/(forms dass)/question2");
+        router.replace("/(forms dass)/question21");
     };
 
     const options = [
