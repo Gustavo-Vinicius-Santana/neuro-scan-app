@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useCapcStore } from "@/lib/stores/useFormCapc";
-import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
+import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
+import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
+import { Platform } from "react-native";
 
 export default function CAPCQuestion2() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
@@ -21,8 +23,12 @@ export default function CAPCQuestion2() {
     const questionIndex = 1;
     const questionData = perguntas[questionIndex];
 
-    useSensorLogger("CAPC", questionIndex + 1 , "accelerometer");
-    useSensorLogger("CAPC", questionIndex + 1 , "gyroscope");
+    if (Platform.OS === "web") {
+      useSensorLoggerWeb("CAPC", questionIndex + 1);
+    } else {
+      useSensorLoggerMobile("CAPC", questionIndex + 1, "accelerometer");
+      useSensorLoggerMobile("CAPC", questionIndex + 1, "gyroscope");
+    }
 
     const startTime = useRef<number | null>(null);
 

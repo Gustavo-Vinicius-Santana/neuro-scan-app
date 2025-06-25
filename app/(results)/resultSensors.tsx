@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { openDatabaseSync } from "expo-sqlite";
-
-const db = openDatabaseSync("sensorData.db");
+import { View, Text, FlatList, StyleSheet, Platform } from "react-native";
+import { initDatabase, isWeb } from "@/lib/database/db";
 
 interface SensorRecord {
   id: number;
@@ -19,12 +17,33 @@ export default function ResultSensors() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await db.withTransactionAsync(async () => {
-          const result = await db.getAllAsync<SensorRecord>(
-            "SELECT * FROM sensor_data ORDER BY id DESC"
-          );
-          setDados(result);
-        });
+        const db = await initDatabase();
+
+        if (isWeb) {
+          // sql.js: usa exec que retorna um array com colunas e valores
+          const res = db.exec("SELECT * FROM sensor_data ORDER BY id DESC");
+          if (res.length > 0) {
+            const { columns, values } = res[0];
+            const data: SensorRecord[] = values.map((row: any[]) => {
+              const obj: any = {};
+              columns.forEach((col: string, i: number) => {
+                obj[col] = row[i];
+              });
+              return obj as SensorRecord;
+            });
+            setDados(data);
+          } else {
+            setDados([]);
+          }
+        } else {
+          // expo-sqlite: usa withTransactionAsync e getAllAsync
+          await db.withTransactionAsync(async () => {
+            const result = await db.getAllAsync(
+              "SELECT * FROM sensor_data ORDER BY id DESC"
+            );
+            setDados(result as SensorRecord[]);
+          });
+        }
       } catch (error) {
         console.error("Erro ao buscar dados do sensor:", error);
       }
@@ -55,11 +74,7 @@ export default function ResultSensors() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -73,7 +88,5 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 8,
   },
-  text: {
-    fontSize: 16,
-  },
+  text: { fontSize: 16 },
 });

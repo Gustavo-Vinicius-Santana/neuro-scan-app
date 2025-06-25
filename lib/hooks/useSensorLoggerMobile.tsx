@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Accelerometer, Gyroscope } from "expo-sensors";
-import { db } from "../database/db";
+import { initDatabase } from "../database/db";
 
 type SensorType = "accelerometer" | "gyroscope";
 
@@ -10,40 +10,36 @@ interface SensorData {
   z: number;
 }
 
-export function useSensorLogger(
+export function useSensorLoggerMobile(
   formulario: string,
   numeroPergunta: number,
   sensor: SensorType
 ) {
   useEffect(() => {
     let isCancelled = false;
+    let subscription: any;
 
     const insertData = async (x: number, y: number) => {
       if (isCancelled) return;
-
       try {
+        const db = await initDatabase();
         await db.runAsync(
-          `INSERT INTO sensor_data (formulario, numero_pergunta, sensor, eixo_x, eixo_y)
-           VALUES (?, ?, ?, ?, ?)`,
+          `INSERT INTO sensor_data (formulario, numero_pergunta, sensor, eixo_x, eixo_y) VALUES (?, ?, ?, ?, ?)`,
           [formulario, numeroPergunta, sensor, x, y]
         );
-      } catch (error) {
-        console.error("Erro ao inserir dado do sensor:", error);
+      } catch (err) {
+        console.error("Erro ao inserir no banco (mobile):", err);
       }
     };
 
-    const handleSensorData = (data: SensorData) => {
-      insertData(data.x, data.y);
-    };
-
-    let subscription: any;
+    const handle = (data: SensorData) => insertData(data.x, data.y);
 
     if (sensor === "accelerometer") {
-      Accelerometer.setUpdateInterval(100); // 0,10 segundos
-      subscription = Accelerometer.addListener(handleSensorData);
+      Accelerometer.setUpdateInterval(100);
+      subscription = Accelerometer.addListener(handle);
     } else if (sensor === "gyroscope") {
       Gyroscope.setUpdateInterval(100);
-      subscription = Gyroscope.addListener(handleSensorData);
+      subscription = Gyroscope.addListener(handle);
     }
 
     return () => {

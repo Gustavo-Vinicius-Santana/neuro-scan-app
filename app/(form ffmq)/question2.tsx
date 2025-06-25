@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useFfmqStore } from "@/lib/stores/useFormFfmq";
-import { useSensorLogger } from "@/lib/hooks/useSensorLogger";
+import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
+import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
+import { Platform } from "react-native";
 
 export default function FFMQQuestion2() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
@@ -21,8 +23,12 @@ export default function FFMQQuestion2() {
     const questionIndex = 1;
     const questionData = perguntas[questionIndex];
 
-    useSensorLogger("FFMQ", questionIndex + 1 , "accelerometer");
-    useSensorLogger("FFMQ", questionIndex + 1 , "gyroscope");
+    if (Platform.OS === "web") {
+      useSensorLoggerWeb("CAPC", questionIndex + 1);
+    } else {
+      useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
+      useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
+    }
 
     const startTime = useRef<number | null>(null);
 
