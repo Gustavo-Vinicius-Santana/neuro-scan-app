@@ -1,48 +1,72 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useQuestionStore } from "@/store/useFormDass";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
+import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
+import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
+import { Platform } from "react-native";
 
 export default function Question1() {
+    const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
-
-    const questionIndex = 0;
 
     const {
         perguntas,
         setResposta,
         incrementaClique,
         setTempo,
+        setTempoResposta,
     } = useQuestionStore();
 
+    const questionIndex = 0;
     const questionData = perguntas[questionIndex];
+
+    useSensorLoggerWeb("CAPC", questionIndex + 1);
+    useSensorLoggerMobile("DASS", questionIndex + 1, "accelerometer");
+    useSensorLoggerMobile("DASS", questionIndex + 1, "gyroscope");
+
+    const startTime = useRef<number | null>(null);
+
+    useEffect(() => {
+        startTime.current = Date.now();
+    }, []);
+
+    const getElapsedSeconds = () => {
+        if (!startTime.current) return 0;
+        const ms = Date.now() - startTime.current;
+        return Math.round((ms / 1000) * 100) / 100;
+    };
+
+    const handleAnswer = (value: number) => {
+        const elapsedSeconds = getElapsedSeconds();
+
+        setResposta(questionIndex, value);
+
+        if (!tempoRespostaRegistrado) {
+            setTempoResposta(questionIndex, elapsedSeconds);
+            setTempoRespostaRegistrado(true);
+            console.log("Tempo da resposta registrado (s):", elapsedSeconds);
+        }
+
+        incrementaClique(questionIndex, value);
+    };
+
+    const handleNext = () => {
+        if (startTime.current === null) return;
+
+        const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
+        setTempo(questionIndex, elapsedSeconds);
+
+        router.replace("/(forms dass)/question21");
+    };
 
     const options = [
         { id: 1, label: "1 - Não aconteceu comigo essa semana" },
         { id: 2, label: "2 - Aconteceu comigo algumas vezes na semana" },
         { id: 3, label: "3 - Aconteceu comigo boa parte da semana" },
     ];
-
-    const handleAnswer = (value: number) => {
-        setResposta(questionIndex, value);
-        incrementaClique(questionIndex, value);
-    };
-
-    const startTimeRef = useRef<number>(0);
-
-    useEffect(() => {
-        startTimeRef.current = Date.now();
-    }, []);
-
-    const handleNext = () => {
-        const endTime = Date.now();
-        const elapsedSeconds = Math.floor((endTime - startTimeRef.current) / 1000);
-        setTempo(questionIndex, elapsedSeconds);
-
-        router.push("/(forms dass)/question2");
-    };
 
     return (
         <View style={styles.container}>

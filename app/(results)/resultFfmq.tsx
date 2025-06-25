@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useFfmqStore } from "@/store/useFormFfmq";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 
 export default function ResultFfmq() {
     const { perguntas } = useFfmqStore();
@@ -59,9 +59,14 @@ export default function ResultFfmq() {
             <ScrollView style={styles.scrollArea}>
                 {perguntas.map((pergunta, index) => (
                     <View key={index} style={styles.responseCard}>
-                        <Text style={styles.questionText}>Pergunta {index + 1}</Text>
+                        <Text style={styles.questionText}>
+                            Pergunta {index + 1}
+                        </Text>
                         <Text style={styles.detail}>
                             Resposta: {pergunta.resposta !== null ? pergunta.resposta : "Não respondido"}
+                        </Text>
+                        <Text style={styles.detail}>
+                            Tempo resposta: {pergunta.tempoResposta ? `${pergunta.tempoResposta} segundos` : "N/A"}
                         </Text>
                         <Text style={styles.detail}>
                             Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}
@@ -74,12 +79,6 @@ export default function ResultFfmq() {
                         </Text>
                         <Text style={styles.detail}>
                             Clique Resposta 3: {pergunta.cliqueResposta3 ?? 0} vezes
-                        </Text>
-                        <Text style={styles.detail}>
-                            Clique Resposta 4: {pergunta.cliqueResposta4 ?? 0} vezes
-                        </Text>
-                        <Text style={styles.detail}>
-                            Clique Resposta 5: {pergunta.cliqueResposta5 ?? 0} vezes
                         </Text>
                     </View>
                 ))}

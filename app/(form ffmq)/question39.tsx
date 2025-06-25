@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
 import { useFfmqStore } from "@/lib/stores/useFormFfmq";
-import { useEffect, useRef, useState } from "react";
 import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { Platform } from "react-native";
 
-export default function Question1() {
+export default function Question39() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
 
@@ -20,12 +20,14 @@ export default function Question1() {
         setTempoResposta,
     } = useFfmqStore();
 
-    const questionIndex = 0;
+    const questionIndex = 38;
     const questionData = perguntas[questionIndex];
+
 
     useSensorLoggerWeb("CAPC", questionIndex + 1);
     useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
     useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
+
 
     const startTime = useRef<number | null>(null);
 
@@ -54,12 +56,12 @@ export default function Question1() {
     };
 
     const handleNext = () => {
-        if (startTime.current === null) return;
-
+      if (startTime.current === null) return;
+      
         const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.replace("/question39");
+        router.replace("/(form capc)/welcome");
     };
 
     const options = [
@@ -73,7 +75,7 @@ export default function Question1() {
   return (
     <View style={styles.container}>
       <Text style={styles.question}>
-        1. Quando estou caminhando, eu deliberadamente percebo as sensações do meu corpo em movimento.
+        39. Eu me reprovo quando tenho ideias irracionais.
       </Text>
 
       <OptionGroup
@@ -85,10 +87,10 @@ export default function Question1() {
       />
 
       <BtnForm
-        title="Próxima"
-        color="#10B981"
+        title="Finalizar form capc"
         onPress={handleNext}
         disabled={questionData.resposta === null}
+        color="#10B981"
       />
     </View>
   );

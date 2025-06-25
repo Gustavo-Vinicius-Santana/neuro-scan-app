@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import useInicialForm from "@/store/useInicialForm";
+import useInicialForm from "@/lib/stores/useInicialForm";
 
 export default function Result() {
   const router = useRouter();
@@ -46,6 +46,13 @@ export default function Result() {
           onPress={() => {router.push("/resultFfmq")}}
         >
           <Text style={styles.buttonText}>Resultado do FFMQ</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {router.push("/resultSensors")}}
+        >
+          <Text style={styles.buttonText}>Resultado sensores</Text>
         </TouchableOpacity>
       </View>
     </View>

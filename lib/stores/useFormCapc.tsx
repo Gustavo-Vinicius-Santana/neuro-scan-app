@@ -1,33 +1,50 @@
 import { create } from 'zustand';
 
-type Pergunta = {
+type PerguntaFfmq = {
   resposta: number | null;
   tempo: number;
+  tempoResposta: number;
   cliqueResposta1: number;
   cliqueResposta2: number;
   cliqueResposta3: number;
+  cliqueResposta4: number;
+  cliqueResposta5: number;
 };
 
-type StoreState = {
-  perguntas: Pergunta[];
+type FfmqStoreState = {
+  perguntas: PerguntaFfmq[];
   setResposta: (index: number, resposta: number) => void;
   incrementaClique: (index: number, resposta: number) => void;
   setTempo: (index: number, tempo: number) => void;
+  setTempoResposta: (index: number, tempoResposta: number) => void;
   reset: () => void;
 };
 
-const TOTAL_PERGUNTAS = 21;
+const TOTAL_PERGUNTAS_FFMQ = 22;
 
-const perguntaInicial: Pergunta = {
+const perguntaInicialFfmq: PerguntaFfmq = {
   resposta: null,
   tempo: 0,
+  tempoResposta: 0,
   cliqueResposta1: 0,
   cliqueResposta2: 0,
   cliqueResposta3: 0,
+  cliqueResposta4: 0,
+  cliqueResposta5: 0,
 };
 
-export const useQuestionStore = create<StoreState>((set) => ({
-  perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+export const useCapcStore = create<FfmqStoreState>((set) => ({
+  perguntas: Array(TOTAL_PERGUNTAS_FFMQ)
+    .fill(null)
+    .map(() => ({ ...perguntaInicialFfmq })),
+
+  setTempoResposta: (index, tempoResposta) => {
+    set((state) => {
+      const perguntas = [...state.perguntas];
+      perguntas[index] = { ...perguntas[index], tempoResposta };
+      return { perguntas };
+    });
+  },
 
   setResposta: (index, resposta) => {
     set((state) => {
@@ -42,7 +59,7 @@ export const useQuestionStore = create<StoreState>((set) => ({
       const perguntas = [...state.perguntas];
       const pergunta = perguntas[index];
 
-      const fieldName = `cliqueResposta${resposta}` as keyof Pergunta;
+      const fieldName = `cliqueResposta${resposta}` as keyof PerguntaFfmq;
       if (!(fieldName in pergunta)) return state;
 
       perguntas[index] = {
@@ -62,6 +79,8 @@ export const useQuestionStore = create<StoreState>((set) => ({
   },
 
   reset: () => ({
-    perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+    perguntas: Array(TOTAL_PERGUNTAS_FFMQ)
+      .fill(null)
+      .map(() => ({ ...perguntaInicialFfmq })),
   }),
 }));

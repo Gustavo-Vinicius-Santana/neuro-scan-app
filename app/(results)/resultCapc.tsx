@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useCapcStore } from "@/store/useFormCapc";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
 
 export default function ResultCapc() {
     const { perguntas } = useCapcStore();
@@ -57,6 +57,9 @@ export default function ResultCapc() {
                         </Text>
                         <Text style={styles.detail}>
                             Resposta: {pergunta.resposta !== null ? pergunta.resposta : "Não respondido"}
+                        </Text>
+                        <Text style={styles.detail}>
+                            Tempo resposta: {pergunta.tempoResposta ? `${pergunta.tempoResposta} segundos` : "N/A"}
                         </Text>
                         <Text style={styles.detail}>
                             Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}

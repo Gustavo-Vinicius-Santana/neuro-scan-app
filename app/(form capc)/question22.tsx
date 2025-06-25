@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import OptionGroup from "@/components/groupButtons/OptionGroup";
 import BtnForm from "@/components/buttons/btnForm";
-import { useFfmqStore } from "@/lib/stores/useFormFfmq";
-import { useEffect, useRef, useState } from "react";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
 import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { Platform } from "react-native";
 
-export default function Question1() {
+export default function Question22() {
     const [ tempoRespostaRegistrado, setTempoRespostaRegistrado ] = useState(false);
     const router = useRouter();
 
@@ -18,14 +18,14 @@ export default function Question1() {
         incrementaClique,
         setTempo,
         setTempoResposta,
-    } = useFfmqStore();
+    } = useCapcStore();
 
-    const questionIndex = 0;
+    const questionIndex = 21;
     const questionData = perguntas[questionIndex];
 
     useSensorLoggerWeb("CAPC", questionIndex + 1);
-    useSensorLoggerMobile("FFMQ", questionIndex + 1, "accelerometer");
-    useSensorLoggerMobile("FFMQ", questionIndex + 1, "gyroscope");
+    useSensorLoggerMobile("CAPC", questionIndex + 1, "accelerometer");
+    useSensorLoggerMobile("CAPC", questionIndex + 1, "gyroscope");
 
     const startTime = useRef<number | null>(null);
 
@@ -54,26 +54,26 @@ export default function Question1() {
     };
 
     const handleNext = () => {
-        if (startTime.current === null) return;
-
+      if (startTime.current === null) return;
+      
         const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
         setTempo(questionIndex, elapsedSeconds);
 
-        router.replace("/question39");
+        router.replace("/(results)/resultGeneral");
     };
 
-    const options = [
-      { id: 1, label: "1 - Nunca" },
-      { id: 2, label: "2 - Às vezes" },
-      { id: 3, label: "3 - Não tenho certeza" },
-      { id: 4, label: "4 - Normalmente verdadeiro" },
-      { id: 5, label: "5 - Quase sempre ou sempre verdadeiro" },
-    ];
+  const options = [
+    { id: 1, label: "1 - Nunca" },
+    { id: 2, label: "2 - Raramente" },
+    { id: 3, label: "3 - Às vezes" },
+    { id: 4, label: "4 - Frequentemente" },
+    { id: 5, label: "5 - Sempre" },
+  ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.question}>
-        1. Quando estou caminhando, eu deliberadamente percebo as sensações do meu corpo em movimento.
+        22. Posso perder completamente a noção do tempo se trabalho intensivamente.
       </Text>
 
       <OptionGroup
@@ -85,10 +85,10 @@ export default function Question1() {
       />
 
       <BtnForm
-        title="Próxima"
-        color="#10B981"
+        title="Finalizar capc"
         onPress={handleNext}
         disabled={questionData.resposta === null}
+        color="#3B82F6"
       />
     </View>
   );

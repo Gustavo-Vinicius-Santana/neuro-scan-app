@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useQuestionStore } from "@/store/useFormDass";
+import { useQuestionStore } from "@/lib/stores/useFormDass";
 
 export default function ResultDass() {
     const { perguntas } = useQuestionStore();
@@ -49,6 +49,9 @@ export default function ResultDass() {
                         </Text>
                         <Text style={styles.detail}>
                             Resposta: {pergunta.resposta !== null ? pergunta.resposta : "Não respondido"}
+                        </Text>
+                        <Text style={styles.detail}>
+                            Tempo resposta: {pergunta.tempoResposta ? `${pergunta.tempoResposta} segundos` : "N/A"}
                         </Text>
                         <Text style={styles.detail}>
                             Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}
