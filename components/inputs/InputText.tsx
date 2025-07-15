@@ -41,7 +41,7 @@ export default function InputText<T extends FieldValues>({
               <Ionicons
                 name={iconName}
                 size={20}
-                color="#3498db"
+                color="#7189BC"
                 style={styles.icon}
               />
             )}
@@ -52,7 +52,7 @@ export default function InputText<T extends FieldValues>({
                 iconName ? { paddingLeft: 40 } : {},
               ]}
               placeholder={placeholder}
-              placeholderTextColor="#4a90e2"
+              placeholderTextColor="#7189BC"
               keyboardType="default"
               value={value}
               onChangeText={onChange}
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#5a5a5a",
+    color: "#7189BC",
     marginBottom: 8,
   },
   inputWrapper: {
