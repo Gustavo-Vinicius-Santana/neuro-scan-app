@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   pageTitle: {
       fontSize: 24,
       fontWeight: "bold",
-      color: "#0033A0",
+      color: "#0839A2",
       marginBottom: 30,
       textAlign: "center",
   },
