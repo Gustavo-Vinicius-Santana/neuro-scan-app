@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { router } from "expo-router";
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
+const Sensor = require("../assets/images/appImages/sensor_icon.png");
 
 export default function TermoSensores() {
     const [isChecked, setIsChecked] = useState(false);
@@ -10,7 +12,9 @@ export default function TermoSensores() {
         <View style={styles.container}>
             <View style={{ alignItems: "center" }}>
                 <View style={styles.card}>
-                    <Text style={styles.sectionTitle}>Termo sensores</Text>
+                    <View style={styles.logo}>
+                        <Image source={Sensor} />
+                    </View>
 
                     <Text style={styles.paragraph}>
                         Para uma experiência mais imersiva e funcionalidades que se adaptam ao seu movimento, precisamos de um sensor de movimento.
@@ -38,7 +42,7 @@ export default function TermoSensores() {
                     onPress={() => router.push("/formInicial")}
                     disabled={!isChecked}
                 >
-                    <Text style={styles.buttonText}>Vamos lá</Text>
+                    <Text style={styles.buttonText}>Próximo</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -54,8 +58,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#f4f4f4",
     },
     card: {
-        backgroundColor: "rgba(0, 123, 255, 0.15)",
-        borderRadius: 16,
         padding: 20,
         marginBottom: 20,
     },
@@ -65,9 +67,17 @@ const styles = StyleSheet.create({
         color: "#007BFF",
         marginBottom: 10,
     },
+    logo: {
+        marginTop: 40,
+        alignSelf: "center",
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#fff",
+        textTransform: "uppercase",
+    },
     paragraph: {
         fontSize: 16,
-        color: "#333",
+        color: "#7189BC",
         lineHeight: 22,
         marginBottom: 10,
     },
@@ -94,12 +104,12 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     button: {
-        width: 200,
-        alignItems: "center",
         backgroundColor: "#0033A0",
-        paddingVertical: 15,
-        paddingHorizontal: 50,
-        borderRadius: 30,
+        padding: 15,
+        borderRadius: 28,
+        alignItems: "center",
+        marginTop: 30,
+        width: "25%",
     },
     buttonDisabled: {
         backgroundColor: "#cccccc",

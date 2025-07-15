@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { initializeDatabase } from "@/lib/database/initializeDatabase";
+
+//@ts-ignore
+import logo from '@/assets/images/appImages/logo.png';
 
 export default function Index() {
   const router = useRouter();
@@ -22,7 +25,9 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.logo}>neuroscan</Text>
+      <View style={styles.logo}>
+        <Image source={logo} />
+      </View>
 
       <View style={styles.welcomeContainer}>
         <Text style={styles.title}>Seja{"\n"}bem vindo!</Text>

@@ -7,6 +7,8 @@ export default function RootLayout() {
       <Stack.Screen name="testeSensor" options={{headerShown: false}}/>
       <Stack.Screen name="formInicial" options={{headerShown: false}}/>
 
+      <Stack.Screen name="sobre" options={{headerShown: false}}/>
+
       <Stack.Screen name="termoParticipacao" options={{headerShown: false}}/>
       <Stack.Screen name="termoSensores" options={{headerShown: false}}/>
 

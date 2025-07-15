@@ -54,7 +54,7 @@ export default function TesteSensor() {
     }, []);
 
     function handlePress() {
-        router.replace("/termoParticipacao");
+        router.replace("/sobre");
     }
 
     return (
@@ -87,9 +87,11 @@ export default function TesteSensor() {
                 </View>
             )}
 
+            <View style={{ alignItems: "center" }}>
             <TouchableOpacity style={styles.button} onPress={handlePress}>
                 <Text style={styles.buttonText}>Vamos lá</Text>
             </TouchableOpacity>
+            </View>
         </ScrollView>
     );
 }
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     card: {
-        backgroundColor: "rgba(0, 123, 255, 0.15)",
+        backgroundColor: "#DEE6F5",
         borderRadius: 16,
         padding: 20,
         marginBottom: 20,
@@ -115,21 +117,22 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: "#007BFF",
+        color: "#0839A2",
         marginBottom: 10,
     },
     paragraph: {
         fontSize: 16,
-        color: "#333",
+        color: "#395281",
         lineHeight: 22,
         marginBottom: 10,
     },
     button: {
-        backgroundColor: "#007BFF",
+        backgroundColor: "#0033A0",
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 28,
         alignItems: "center",
         marginTop: 30,
+        width: "25%",
     },
     buttonText: {
         color: "#fff",

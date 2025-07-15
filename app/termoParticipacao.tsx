@@ -41,7 +41,7 @@ export default function TermoParticipacao() {
                     onPress={() => router.push("/termoSensores")}
                     disabled={!isChecked}
                 >
-                    <Text style={styles.buttonText}>Vamos lá</Text>
+                    <Text style={styles.buttonText}>Próximo</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#f4f4f4",
     },
     card: {
-        backgroundColor: "rgba(0, 123, 255, 0.15)",
+        backgroundColor: "#DEE6F5",
         borderRadius: 16,
         padding: 20,
         marginBottom: 20,
@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: "#007BFF",
+        color: "#0839A2",
         marginBottom: 10,
     },
     paragraph: {
         fontSize: 16,
-        color: "#333",
+        color: "#395281",
         lineHeight: 22,
         marginBottom: 10,
     },
@@ -97,12 +97,12 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     button: {
-        width: 200,
-        alignItems: "center",
         backgroundColor: "#0033A0",
-        paddingVertical: 15,
-        paddingHorizontal: 50,
-        borderRadius: 30,
+        padding: 15,
+        borderRadius: 28,
+        alignItems: "center",
+        marginTop: 30,
+        width: "25%",
     },
     buttonDisabled: {
         backgroundColor: "#cccccc",
