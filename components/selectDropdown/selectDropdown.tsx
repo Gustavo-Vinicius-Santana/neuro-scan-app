@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ViewStyle } from "react-native";
 import Select, { ISelectItem } from "rn-custom-select-dropdown";
 
 type Props<T> = {
@@ -8,6 +8,7 @@ type Props<T> = {
   onChange: (item: ISelectItem<T>) => void;
   placeholder?: string;
   label?: string;
+  width?: any; // ← nova prop
 };
 
 export default function CustomSelectDropdown<T>({
@@ -16,9 +17,10 @@ export default function CustomSelectDropdown<T>({
   onChange,
   placeholder = "Selecione uma opção",
   label,
+  width = "100%",
 }: Props<T>) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, width ? { width } : undefined]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <Select
         data={items}
@@ -35,9 +37,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   label: {
-    marginBottom: 6,
+    marginBottom: 8,
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "600",
     color: "#7189BC",
   },
 });

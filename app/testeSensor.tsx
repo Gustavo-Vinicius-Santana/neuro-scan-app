@@ -89,7 +89,7 @@ export default function TesteSensor() {
 
             <View style={{ alignItems: "center" }}>
             <TouchableOpacity style={styles.button} onPress={handlePress}>
-                <Text style={styles.buttonText}>Vamos lá</Text>
+                <Text style={styles.buttonText}>Próximo</Text>
             </TouchableOpacity>
             </View>
         </ScrollView>

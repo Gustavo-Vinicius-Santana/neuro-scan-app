@@ -69,15 +69,18 @@ export default function RadioGroup<T>({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
+    alignItems: "center", // mantém o label centralizado
   },
   groupLabel: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
     color: "#7189BC",
+    textAlign: "center",
   },
   optionsContainer: {
     flexDirection: "column",
+    alignItems: "flex-start", // <- ALINHA OS ITENS À ESQUERDA
   },
   radioItem: {
     flexDirection: "row",

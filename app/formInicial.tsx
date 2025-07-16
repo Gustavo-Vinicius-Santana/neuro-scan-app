@@ -106,14 +106,27 @@ export default function FormInicial() {
           iconName="person"
         />
 
-        <InputNumber
-          label="Idade"
-          placeholder="Sua idade"
-          name="age"
-          control={control}
-          rules={{ required: true }}
-          iconName="calendar"
-        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1}}>
+          <InputNumber
+            label="Idade"
+            placeholder="Sua idade"
+            name="age"
+            control={control}
+            rules={{ required: true }}
+            iconName="calendar"
+            width="48%"
+          />
+
+          <SelectDropdown 
+            label="Sexo"
+            placeholder="Selecione seu sexo"
+            items={sexo}
+            value={selectedSexo}
+            onChange={setSelectedSexo}
+            width="48%"
+          />
+        </View>
+
 
         <InputText
           label="Email"
@@ -182,17 +195,6 @@ export default function FormInicial() {
         </View>
 
         <RadioGroup 
-          label="Sexo"
-          options={sexo} 
-          value={selectedSexo?.value ?? null}
-          onChange={(newValue) => {
-            const item = sexo.find(s => s.value === newValue) || null;
-            setSelectedSexo(item);
-          }}
-          horizontal
-        />
-
-        <RadioGroup 
           label="Faz tratamento psicologico?"
           options={option} 
           value={selectedTratamento?.value ?? null}
@@ -250,13 +252,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4f4f4",
     alignItems: "center",
     padding: 20,
-    paddingTop: 50,
+    paddingTop: 25,
   },
   pageTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#0839A2",
-    marginBottom: 30,
+    marginBottom: 10,
     textAlign: "center",
   },
   button: {
