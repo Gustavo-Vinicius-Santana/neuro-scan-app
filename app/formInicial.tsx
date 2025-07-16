@@ -6,6 +6,9 @@ import useInicialForm from "@/lib/stores/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
+import Select, { ISelectItem } from "rn-custom-select-dropdown";
+import SelectDropdown from "@/components/selectDropdown/selectDropdown";
+import { useState } from "react";
 
 type FormData = {
   name: string;
@@ -15,11 +18,16 @@ type FormData = {
   ocupacao: string;
   carga_horaria: string;
   escolaridade: string;
+  sexo?: string;
+  estado?: string;
 };
 
 export default function FormInicial() {
   const router = useRouter();
   const { setFormData } = useInicialForm();
+
+  const [selectedSexo, setSelectedSexo] = useState<ISelectItem<string> | null>(null);
+  const [selectedEstado, setSelectedEstado] = useState<ISelectItem<string> | null>(null);
 
   const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
@@ -31,6 +39,41 @@ export default function FormInicial() {
   const goToFfmq = () => router.push("/(form ffmq)/welcome");
   const goToCapc = () => router.push("/(form capc)/welcome");
   const goToResults = () => router.push("/(results)/resultGeneral");
+
+  const sexo = [
+    { label: "Masculino", value: "masculino"},
+    { label: "Feminino", value: "feminino"},
+  ]
+
+  const estados: Array<ISelectItem<string>> = [
+    { label: "Acre", value: "AC" },
+    { label: "Alagoas", value: "AL" },
+    { label: "Amapá", value: "AP" },
+    { label: "Amazonas", value: "AM" },
+    { label: "Bahia", value: "BA" },
+    { label: "Ceará", value: "CE" },
+    { label: "Distrito Federal", value: "DF" },
+    { label: "Espírito Santo", value: "ES" },
+    { label: "Goiás", value: "GO" },
+    { label: "Maranhão", value: "MA" },
+    { label: "Mato Grosso", value: "MT" },
+    { label: "Mato Grosso do Sul", value: "MS" },
+    { label: "Minas Gerais", value: "MG" },
+    { label: "Pará", value: "PA" },
+    { label: "Paraíba", value: "PB" },
+    { label: "Paraná", value: "PR" },
+    { label: "Pernambuco", value: "PE" },
+    { label: "Piauí", value: "PI" },
+    { label: "Rio de Janeiro", value: "RJ" },
+    { label: "Rio Grande do Norte", value: "RN" },
+    { label: "Rio Grande do Sul", value: "RS" },
+    { label: "Rondônia", value: "RO" },
+    { label: "Roraima", value: "RR" },
+    { label: "Santa Catarina", value: "SC" },
+    { label: "São Paulo", value: "SP" },
+    { label: "Sergipe", value: "SE" },
+    { label: "Tocantins", value: "TO" },
+  ];
 
   return (
     <View style={styles.container}>
@@ -110,6 +153,26 @@ export default function FormInicial() {
           rules={{ required: true }}
           iconName="school"
         />
+
+        <View style={{ zIndex: 10, marginBottom: 20 }}>
+          <SelectDropdown 
+            label="Sexo"
+            placeholder="Selecione seu sexo"
+            items={sexo} 
+            value={selectedSexo}
+            onChange={setSelectedSexo}        
+          />
+        </View>
+
+        <View style={{ zIndex: 9, marginBottom: 20 }}>
+          <SelectDropdown 
+            label="Estado"
+            placeholder="Selecione seu estado"
+            items={estados}
+            value={selectedEstado}
+            onChange={setSelectedEstado}
+          />
+        </View>
 
         <View style={{ alignItems: "center" }}>
           <BtnForm
