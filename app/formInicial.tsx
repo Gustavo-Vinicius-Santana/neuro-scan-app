@@ -1,15 +1,15 @@
 import { useRouter } from "expo-router";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useState, useMemo } from "react";
 
 import useInicialForm from "@/lib/stores/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
-import Select, { ISelectItem } from "rn-custom-select-dropdown";
 import SelectDropdown from "@/components/selectDropdown/selectDropdown";
-import { useState } from "react";
 import RadioGroup from "@/components/groupButtons/RadioGroup";
+import { ISelectItem } from "rn-custom-select-dropdown";
 
 type FormData = {
   name: string;
@@ -18,9 +18,6 @@ type FormData = {
   renda: string;
   ocupacao: string;
   carga_horaria: string;
-  escolaridade: string;
-  sexo?: string;
-  estado?: string;
 };
 
 export default function FormInicial() {
@@ -29,14 +26,38 @@ export default function FormInicial() {
 
   const [selectedSexo, setSelectedSexo] = useState<ISelectItem<string> | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<ISelectItem<string> | null>(null);
-  const [ selectedEscolaridade, setSelectedEscolaridade ] = useState<ISelectItem<string> | null>(null);
-  const [ selectedTratamento, setSelectedTratamento ] = useState<ISelectItem<string> | null>(null);
-  const [ selecteMedica, setSelectedMedica ] = useState<ISelectItem<string> | null>(null);
+  const [selectedEscolaridade, setSelectedEscolaridade] = useState<ISelectItem<string> | null>(null);
+  const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
+  const [selecteMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
 
-  const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+    watch,
+  } = useForm<FormData>({
+    mode: "onChange",
+  });
+
+  const isCustomValid = useMemo(() => {
+    return (
+      selectedSexo !== null &&
+      selectedEstado !== null &&
+      selectedEscolaridade !== null &&
+      selectedTratamento !== null &&
+      selecteMedica !== null
+    );
+  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica]);
+
+  const isAllValid = isValid && isCustomValid;
 
   const goToDass: SubmitHandler<FormData> = (data) => {
-    setFormData(data);
+    setFormData({
+      ...data,
+      sexo: selectedSexo?.value,
+      estado: selectedEstado?.value,
+      escolaridade: selectedEscolaridade?.value,
+    });
     router.push("/(forms dass)/welcome");
   };
 
@@ -45,15 +66,15 @@ export default function FormInicial() {
   const goToResults = () => router.push("/(results)/resultGeneral");
 
   const sexo = [
-    { label: "Masculino", value: "masculino"},
-    { label: "Feminino", value: "feminino"},
-    { label: "Outro", value: "outro"},
+    { label: "Masculino", value: "masculino" },
+    { label: "Feminino", value: "feminino" },
+    { label: "Outro", value: "outro" },
   ];
 
   const escolaridade = [
-    { label: "Ensino Fundamental", value: "ensino fundamental"},
-    { label: "Ensino Medio", value: "ensino medio"},
-    { label: "Ensino Superior", value: "ensino superior"},
+    { label: "Ensino Fundamental", value: "ensino fundamental" },
+    { label: "Ensino Medio", value: "ensino medio" },
+    { label: "Ensino Superior", value: "ensino superior" },
   ];
 
   const estados: Array<ISelectItem<string>> = [
@@ -96,7 +117,6 @@ export default function FormInicial() {
       <Text style={styles.pageTitle}>Cadastro</Text>
 
       <ScrollView style={{ width: "100%", maxWidth: 500 }}>
-
         <InputText
           label="Nome"
           placeholder="Nome"
@@ -106,7 +126,7 @@ export default function FormInicial() {
           iconName="person"
         />
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1}}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1 }}>
           <InputNumber
             label="Idade"
             placeholder="Sua idade"
@@ -117,7 +137,7 @@ export default function FormInicial() {
             width="48%"
           />
 
-          <SelectDropdown 
+          <SelectDropdown
             label="Sexo"
             placeholder="Selecione seu sexo"
             items={sexo}
@@ -127,14 +147,13 @@ export default function FormInicial() {
           />
         </View>
 
-
         <InputText
           label="Email"
           placeholder="Seu email"
           name="email"
           control={control}
-          rules={{ 
-            required: true, 
+          rules={{
+            required: true,
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
               message: "Digite um email válido",
@@ -175,17 +194,17 @@ export default function FormInicial() {
         </View>
 
         <View style={{ zIndex: 9, marginBottom: 20 }}>
-          <SelectDropdown 
+          <SelectDropdown
             label="Escolaridade"
             placeholder="Selecione sua escolaridade"
-            items={escolaridade} 
+            items={escolaridade}
             value={selectedEscolaridade}
-            onChange={setSelectedEscolaridade}        
+            onChange={setSelectedEscolaridade}
           />
         </View>
 
         <View style={{ zIndex: 7, marginBottom: 20 }}>
-          <SelectDropdown 
+          <SelectDropdown
             label="Estado"
             placeholder="Selecione seu estado"
             items={estados}
@@ -194,52 +213,33 @@ export default function FormInicial() {
           />
         </View>
 
-        <RadioGroup 
+        <RadioGroup
           label="Faz tratamento psicologico?"
-          options={option} 
+          options={option}
           value={selectedTratamento?.value ?? null}
           onChange={(newValue) => {
-            const item = option.find(s => s.value === newValue) || null;
+            const item = option.find((s) => s.value === newValue) || null;
             setSelectedTratamento(item);
           }}
           horizontal
         />
 
-        <RadioGroup 
+        <RadioGroup
           label="Toma alguma medicação?"
-          options={option} 
+          options={option}
           value={selecteMedica?.value ?? null}
           onChange={(newValue) => {
-            const item = option.find(s => s.value === newValue) || null;
+            const item = option.find((s) => s.value === newValue) || null;
             setSelectedMedica(item);
           }}
           horizontal
         />
 
         <View style={{ alignItems: "center" }}>
-          <BtnForm
-            title="Ir para formulario Dass-21"
-            onPress={handleSubmit(goToDass)}
-            disabled={!isValid}
-          />
-
-          <BtnForm
-            title="Ir para formulario FFMQ"
-            onPress={handleSubmit(goToFfmq)}
-            disabled={!isValid}
-          />
-
-          <BtnForm
-            title="Ir para formulario Capc"
-            onPress={handleSubmit(goToCapc)}
-            disabled={!isValid}
-          />
-
-          <BtnForm
-            title="Ir para resultados"
-            onPress={handleSubmit(goToResults)}
-            disabled={!isValid}
-          />
+          <BtnForm title="Ir para formulario Dass-21" onPress={handleSubmit(goToDass)} disabled={!isAllValid} />
+          <BtnForm title="Ir para formulario FFMQ" onPress={handleSubmit(goToFfmq)} disabled={!isAllValid} />
+          <BtnForm title="Ir para formulario Capc" onPress={handleSubmit(goToCapc)} disabled={!isAllValid} />
+          <BtnForm title="Ir para resultados" onPress={handleSubmit(goToResults)} disabled={!isAllValid} />
         </View>
       </ScrollView>
     </View>
@@ -260,18 +260,5 @@ const styles = StyleSheet.create({
     color: "#0839A2",
     marginBottom: 10,
     textAlign: "center",
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    width: "100%",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

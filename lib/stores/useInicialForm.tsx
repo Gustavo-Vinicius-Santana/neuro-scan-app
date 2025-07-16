@@ -4,6 +4,12 @@ interface FormData {
   name: string;
   age: string;
   email: string;
+  renda: string;
+  ocupacao: string;
+  carga_horaria: string;
+  escolaridade: string;
+  sexo?: string;
+  estado?: string;
 }
 
 interface FormState {
@@ -16,6 +22,10 @@ const useInicialForm = create<FormState>((set) => ({
     name: "",
     age: "",
     email: "",
+    renda: "",
+    ocupacao: "",
+    carga_horaria: "",
+    escolaridade: "",
   },
   setFormData: (data) =>
     set((state) => ({ formData: { ...state.formData, ...data } })),
