@@ -28,6 +28,7 @@ export default function FormInicial() {
 
   const [selectedSexo, setSelectedSexo] = useState<ISelectItem<string> | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<ISelectItem<string> | null>(null);
+  const [ selectedEscolaridade, setSelectedEscolaridade ] = useState<ISelectItem<string> | null>(null);
 
   const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
@@ -43,7 +44,13 @@ export default function FormInicial() {
   const sexo = [
     { label: "Masculino", value: "masculino"},
     { label: "Feminino", value: "feminino"},
-  ]
+  ];
+
+  const escolaridade = [
+    { label: "Ensino Fundamental", value: "ensino fundamental"},
+    { label: "Ensino Medio", value: "ensino medio"},
+    { label: "Ensino Superior", value: "ensino superior"},
+  ];
 
   const estados: Array<ISelectItem<string>> = [
     { label: "Acre", value: "AC" },
@@ -145,16 +152,17 @@ export default function FormInicial() {
           />
         </View>
 
-        <InputText
-          label="Escolaridade"
-          placeholder="Informe sua escolaridade"
-          name="escolaridade"
-          control={control}
-          rules={{ required: true }}
-          iconName="school"
-        />
+        <View style={{ zIndex: 9, marginBottom: 20 }}>
+          <SelectDropdown 
+            label="Escolaridade"
+            placeholder="Selecione sua escolaridade"
+            items={escolaridade} 
+            value={selectedEscolaridade}
+            onChange={setSelectedEscolaridade}        
+          />
+        </View>
 
-        <View style={{ zIndex: 10, marginBottom: 20 }}>
+        <View style={{ zIndex: 8, marginBottom: 20 }}>
           <SelectDropdown 
             label="Sexo"
             placeholder="Selecione seu sexo"
@@ -164,7 +172,7 @@ export default function FormInicial() {
           />
         </View>
 
-        <View style={{ zIndex: 9, marginBottom: 20 }}>
+        <View style={{ zIndex: 7, marginBottom: 20 }}>
           <SelectDropdown 
             label="Estado"
             placeholder="Selecione seu estado"
