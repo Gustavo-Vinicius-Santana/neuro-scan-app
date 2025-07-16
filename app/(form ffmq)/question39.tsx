@@ -74,9 +74,13 @@ export default function Question39() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>
-        39. Eu me reprovo quando tenho ideias irracionais.
-      </Text>
+      <View style={{ alignItems: "flex-start"}}>
+        <Text style={{ color: "#0839A2", fontSize: 16}}>PERGUNTA 39</Text>
+        <Text style={styles.question}>
+          Eu me reprovo quando tenho ideias irracionais.
+        </Text>
+      </View>
+
 
       <OptionGroup
         options={options}
@@ -107,6 +111,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
-    color: "#0056b3",
+    color: "#7189BC",
   },
 });
