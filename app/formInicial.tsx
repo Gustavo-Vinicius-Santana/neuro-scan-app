@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
-import { Accelerometer } from 'expo-sensors';
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import useInicialForm from "@/lib/stores/useInicialForm";
@@ -13,6 +11,10 @@ type FormData = {
   name: string;
   age: string;
   email: string;
+  renda: string;
+  ocupacao: string;
+  carga_horaria: string;
+  escolaridade: string;
 };
 
 export default function FormInicial() {
@@ -23,37 +25,27 @@ export default function FormInicial() {
 
   const goToDass: SubmitHandler<FormData> = (data) => {
     setFormData(data);
-  
     router.push("/(forms dass)/welcome");
   };
 
-  const goToFfmq = () => {
-    router.push("/(form ffmq)/welcome");
-  };
-
-  const goToCapc = () => {
-    router.push("/(form capc)/welcome");
-  };
-
-  const goToResults = () => {
-    router.push("/(results)/resultGeneral");
-  };
+  const goToFfmq = () => router.push("/(form ffmq)/welcome");
+  const goToCapc = () => router.push("/(form capc)/welcome");
+  const goToResults = () => router.push("/(results)/resultGeneral");
 
   return (
     <View style={styles.container}>
-
       <Text style={styles.pageTitle}>Cadastro</Text>
 
-      <View style={{ width: "100%", maxWidth: 500 }}>
+      <ScrollView style={{ width: "100%", maxWidth: 500 }}>
 
-      <InputText
-        label="Nome"
-        placeholder="Nome"
-        name="name"
-        control={control}
-        rules={{ required: true }}
-        iconName="person"
-      />
+        <InputText
+          label="Nome"
+          placeholder="Nome"
+          name="name"
+          control={control}
+          rules={{ required: true }}
+          iconName="person"
+        />
 
         <InputNumber
           label="Idade"
@@ -79,32 +71,72 @@ export default function FormInicial() {
           iconName="mail"
         />
 
-          <View style={{alignItems: "center"}}>
-            <BtnForm         
-              title="Ir para formulario Dass-21"
-              onPress={handleSubmit(goToDass)}
-              disabled={!isValid}
-            />
+        <InputNumber
+          label="Renda mensal"
+          placeholder="Informe sua renda"
+          name="renda"
+          control={control}
+          rules={{ required: true }}
+          iconName="cash"
+        />
 
-            <BtnForm         
-              title="Ir para formulario FFMQ"
-              onPress={handleSubmit(goToFfmq)}
-              disabled={!isValid}
-            />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <InputText
+            width="48%"
+            label="Ocupação"
+            placeholder="Sua ocupação"
+            name="ocupacao"
+            control={control}
+            rules={{ required: true }}
+            iconName="briefcase"
+          />
 
-            <BtnForm         
-              title="Ir para formulario Capc"
-              onPress={handleSubmit(goToCapc)}
-              disabled={!isValid}
-            />
-
-            <BtnForm         
-              title="Ir para resultados"
-              onPress={handleSubmit(goToResults)}
-              disabled={!isValid}
+          <InputNumber
+            width="48%"
+            label="Carga horária (horas)"
+            placeholder="Sua carga horária"
+            name="carga_horaria"
+            control={control}
+            rules={{ required: true }}
+            iconName="time"
           />
         </View>
-      </View>
+
+        <InputText
+          label="Escolaridade"
+          placeholder="Informe sua escolaridade"
+          name="escolaridade"
+          control={control}
+          rules={{ required: true }}
+          iconName="school"
+        />
+
+        <View style={{ alignItems: "center" }}>
+          <BtnForm
+            title="Ir para formulario Dass-21"
+            onPress={handleSubmit(goToDass)}
+            disabled={!isValid}
+          />
+
+          <BtnForm
+            title="Ir para formulario FFMQ"
+            onPress={handleSubmit(goToFfmq)}
+            disabled={!isValid}
+          />
+
+          <BtnForm
+            title="Ir para formulario Capc"
+            onPress={handleSubmit(goToCapc)}
+            disabled={!isValid}
+          />
+
+          <BtnForm
+            title="Ir para resultados"
+            onPress={handleSubmit(goToResults)}
+            disabled={!isValid}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -118,11 +150,11 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   pageTitle: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: "#0839A2",
-      marginBottom: 30,
-      textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#0839A2",
+    marginBottom: 30,
+    textAlign: "center",
   },
   button: {
     backgroundColor: "#007BFF",
