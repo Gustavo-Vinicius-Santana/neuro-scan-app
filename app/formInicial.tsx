@@ -9,6 +9,7 @@ import BtnForm from "@/components/buttons/btnForm";
 import Select, { ISelectItem } from "rn-custom-select-dropdown";
 import SelectDropdown from "@/components/selectDropdown/selectDropdown";
 import { useState } from "react";
+import RadioGroup from "@/components/groupButtons/RadioGroup";
 
 type FormData = {
   name: string;
@@ -29,6 +30,8 @@ export default function FormInicial() {
   const [selectedSexo, setSelectedSexo] = useState<ISelectItem<string> | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<ISelectItem<string> | null>(null);
   const [ selectedEscolaridade, setSelectedEscolaridade ] = useState<ISelectItem<string> | null>(null);
+  const [ selectedTratamento, setSelectedTratamento ] = useState<ISelectItem<string> | null>(null);
+  const [ selecteMedica, setSelectedMedica ] = useState<ISelectItem<string> | null>(null);
 
   const { control, handleSubmit, formState: { isValid } } = useForm<FormData>();
 
@@ -44,6 +47,7 @@ export default function FormInicial() {
   const sexo = [
     { label: "Masculino", value: "masculino"},
     { label: "Feminino", value: "feminino"},
+    { label: "Outro", value: "outro"},
   ];
 
   const escolaridade = [
@@ -80,6 +84,11 @@ export default function FormInicial() {
     { label: "São Paulo", value: "SP" },
     { label: "Sergipe", value: "SE" },
     { label: "Tocantins", value: "TO" },
+  ];
+
+  const option = [
+    { label: "Sim", value: "sim" },
+    { label: "Nao", value: "nao" },
   ];
 
   return (
@@ -162,16 +171,6 @@ export default function FormInicial() {
           />
         </View>
 
-        <View style={{ zIndex: 8, marginBottom: 20 }}>
-          <SelectDropdown 
-            label="Sexo"
-            placeholder="Selecione seu sexo"
-            items={sexo} 
-            value={selectedSexo}
-            onChange={setSelectedSexo}        
-          />
-        </View>
-
         <View style={{ zIndex: 7, marginBottom: 20 }}>
           <SelectDropdown 
             label="Estado"
@@ -181,6 +180,39 @@ export default function FormInicial() {
             onChange={setSelectedEstado}
           />
         </View>
+
+        <RadioGroup 
+          label="Sexo"
+          options={sexo} 
+          value={selectedSexo?.value ?? null}
+          onChange={(newValue) => {
+            const item = sexo.find(s => s.value === newValue) || null;
+            setSelectedSexo(item);
+          }}
+          horizontal
+        />
+
+        <RadioGroup 
+          label="Faz tratamento psicologico?"
+          options={option} 
+          value={selectedTratamento?.value ?? null}
+          onChange={(newValue) => {
+            const item = option.find(s => s.value === newValue) || null;
+            setSelectedTratamento(item);
+          }}
+          horizontal
+        />
+
+        <RadioGroup 
+          label="Toma alguma medicação?"
+          options={option} 
+          value={selecteMedica?.value ?? null}
+          onChange={(newValue) => {
+            const item = option.find(s => s.value === newValue) || null;
+            setSelectedMedica(item);
+          }}
+          horizontal
+        />
 
         <View style={{ alignItems: "center" }}>
           <BtnForm
