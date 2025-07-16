@@ -15,6 +15,7 @@ type Props<T extends FieldValues> = {
   control: Control<T>;
   rules?: RegisterOptions<T, FieldPath<T>>;
   iconName?: keyof typeof Ionicons.glyphMap;
+  width?: any; 
 };
 
 export default function InputNumber<T extends FieldValues>({
@@ -24,6 +25,7 @@ export default function InputNumber<T extends FieldValues>({
   control,
   rules,
   iconName,
+  width = "100%",
 }: Props<T>) {
   return (
     <Controller
@@ -34,7 +36,7 @@ export default function InputNumber<T extends FieldValues>({
         field: { onChange, value },
         fieldState: { error },
       }) => (
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { width }]}>
           <Text style={styles.label}>{label}</Text>
           <View style={styles.inputWrapper}>
             {iconName && (
@@ -52,7 +54,7 @@ export default function InputNumber<T extends FieldValues>({
                 iconName ? { paddingLeft: 40 } : {},
               ]}
               placeholder={placeholder}
-              placeholderTextColor="#7189BC" // Azul mais suave
+              placeholderTextColor="#7189BC"
               keyboardType="numeric"
               value={value}
               onChangeText={onChange}
@@ -68,6 +70,7 @@ export default function InputNumber<T extends FieldValues>({
     />
   );
 }
+
 
 const styles = StyleSheet.create({
   inputContainer: {

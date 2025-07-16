@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     marginBottom: 12,
-    backgroundColor: "rgba(0, 123, 255, 0.08)", // azul claro com opacidade
+    backgroundColor: "#DEE6F5",
   },
   optionSelected: {
-    backgroundColor: "rgba(0, 123, 255, 0.18)", // um pouco mais escuro ao selecionar
+    backgroundColor: "rgba(56, 60, 64, 0.18)",
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#007BFF",
-    borderRadius: 10, // circular
+    borderColor: "#7189BC",
+    borderRadius: 10,
     marginRight: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    color: "#0056b3", // azul mais escuro para o texto
+    color: "#7189BC",
     flexShrink: 1,
+    fontWeight: "600",
   },
 });

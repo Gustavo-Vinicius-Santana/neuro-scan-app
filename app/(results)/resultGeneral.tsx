@@ -1,58 +1,57 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import useInicialForm from "@/lib/stores/useInicialForm";
 
 export default function Result() {
   const router = useRouter();
-
   const { formData } = useInicialForm();
+
+  const renderPair = (label: string, value?: string) => (
+    <View style={styles.card}>
+      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.value}>{value || "Não informado"}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Resultados</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Resumo do Cadastro</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Nome:</Text>
-        <Text style={styles.value}>{formData.name}</Text>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Informações Pessoais</Text>
+          <View style={styles.row}>
+            {renderPair("Nome", formData.name)}
+            {renderPair("Idade", formData.age)}
+            {renderPair("Email", formData.email)}
+            {renderPair("Sexo", formData.sexo)}
+            {renderPair("Estado", formData.estado)}
+          </View>
+        </View>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Idade:</Text>
-        <Text style={styles.value}>{formData.age}</Text>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Profissão e Escolaridade</Text>
+          <View style={styles.row}>
+            {renderPair("Escolaridade", formData.escolaridade)}
+            {renderPair("Ocupação", formData.ocupacao)}
+            {renderPair("Carga Horária", formData.carga_horaria)}
+            {renderPair("Renda", formData.renda)}
+          </View>
+        </View>
+      </ScrollView>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{formData.email}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {router.push("/resultDass")}}
-        >
-          <Text style={styles.buttonText}>Resultado do DASS</Text>
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/resultDass")}>
+          <Text style={styles.buttonText}>Ver Resultado DASS</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {router.push("/resultCapc")}}
-        >
-          <Text style={styles.buttonText}>Resultado do CAPC</Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/resultCapc")}>
+          <Text style={styles.buttonText}>Ver Resultado CAPC</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {router.push("/resultFfmq")}}
-        >
-          <Text style={styles.buttonText}>Resultado do FFMQ</Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/resultFfmq")}>
+          <Text style={styles.buttonText}>Ver Resultado FFMQ</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {router.push("/resultSensors")}}
-        >
-          <Text style={styles.buttonText}>Resultado sensores</Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/resultSensors")}>
+          <Text style={styles.buttonText}>Ver Resultado Sensores</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -62,48 +61,73 @@ export default function Result() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
-    padding: 20,
+    backgroundColor: "#F9FAFB",
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 100,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 20,
-    color: "#333",
+    color: "#1F2937",
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 12,
+    color: "#4F46E5",
+  },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 10,
   },
   card: {
-    width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 15,
+    width: "48%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 14,
+    marginBottom: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
   },
   label: {
-    fontSize: 16,
-    color: "#555",
-    fontWeight: "600",
-    marginBottom: 4,
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+    marginBottom: 2,
   },
   value: {
-    fontSize: 18,
-    color: "#000",
+    fontSize: 16,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  footer: {
+    backgroundColor: "#F9FAFB",
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
   },
   button: {
-    backgroundColor: "#4F46E5", // Cor do botão
-    paddingVertical: 12,
+    backgroundColor: "#4F46E5",
+    paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10, // Espaçamento entre os botões
+    marginBottom: 10,
   },
   buttonText: {
-    color: "#fff", // Cor do texto do botão
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
   },

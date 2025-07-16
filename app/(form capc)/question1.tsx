@@ -72,9 +72,13 @@ export default function Question1() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>
-        1. Eu consigo soluções para problemas através dos meus sonhos.
-      </Text>
+      <View style={{ alignItems: "flex-start"}}>
+        <Text style={{ color: "#0839A2", fontSize: 16}}>PERGUNTA 1</Text>
+        <Text style={styles.question}>
+          Eu consigo soluções para problemas através dos meus sonhos.
+        </Text>
+      </View>
+
 
       <OptionGroup
         options={options}
@@ -105,6 +109,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
-    color: "#0056b3",
+    color: "#7189BC",
   },
 });

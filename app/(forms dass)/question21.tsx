@@ -70,9 +70,13 @@ export default function Question21() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.question}>
-                21. Senti que a vida não tinha sentido.
-            </Text>
+            <View style={{ alignItems: "flex-start"}}>
+                <Text style={{ color: "#0839A2", fontSize: 16}}>PERGUNTA 21</Text>
+                <Text style={styles.question}>
+                    Senti que a vida não tinha sentido.
+                </Text>
+            </View>
+
             <OptionGroup
                 options={options}
                 selected={questionData.resposta}
@@ -102,6 +106,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 30,
-        color: "#0056b3",
+        color: "#7189BC",
     },
 });
