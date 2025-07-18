@@ -220,6 +220,16 @@ export const ffmqQuestions = [
         ],
 },
 {
+    text: "Eu faço coisas sem estar plenamente consciente do que estou fazendo..",
+    options: [ 
+        { id: 1, label: "1 - Nunca ou raramente verdadeiro" },
+        { id: 2, label: "2 - Às vezes verdadeiro" },
+        { id: 3, label: "3 - Não tenho certeza" },
+        { id: 4, label: "4 - Normalmente verdadeiro" },
+        { id: 5, label: "5 - Quase sempre ou sempre verdadeiro" },
+        ],
+},
+{
     text: "Geralmente, quando tenho imagens ou pensamentos ruins, eu me sinto calmo logo depois.",
     options: [ 
         { id: 1, label: "1 - Nunca ou raramente verdadeiro" },
