@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import useInicialForm from "@/lib/stores/useInicialForm";
+import GraficoRadar from "@/components/graphics/graficoRadar";
 
 export default function Result() {
   const router = useRouter();
@@ -15,30 +16,9 @@ export default function Result() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Resumo do Cadastro</Text>
+      <Text style={styles.title}>Resultado geral</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações Pessoais</Text>
-          <View style={styles.row}>
-            {renderPair("Nome", formData.name)}
-            {renderPair("Idade", formData.age)}
-            {renderPair("Email", formData.email)}
-            {renderPair("Sexo", formData.sexo)}
-            {renderPair("Estado", formData.estado)}
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profissão e Escolaridade</Text>
-          <View style={styles.row}>
-            {renderPair("Escolaridade", formData.escolaridade)}
-            {renderPair("Ocupação", formData.ocupacao)}
-            {renderPair("Carga Horária", formData.carga_horaria)}
-            {renderPair("Renda", formData.renda)}
-          </View>
-        </View>
-      </ScrollView>
+      <GraficoRadar />
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/resultDass")}>
