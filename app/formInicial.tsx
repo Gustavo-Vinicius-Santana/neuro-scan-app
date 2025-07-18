@@ -7,9 +7,11 @@ import useInicialForm from "@/lib/stores/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
-import SelectDropdown from "@/components/selectDropdown/selectDropdown";
+import SelectDropdown from "@/components/dropdowns/selectDropdown";
 import RadioGroup from "@/components/groupButtons/RadioGroup";
 import { ISelectItem } from "rn-custom-select-dropdown";
+
+import SearchableDropdown from "@/components/dropdowns/searchDropdown";
 
 type FormData = {
   name: string;
@@ -203,15 +205,12 @@ export default function FormInicial() {
           />
         </View>
 
-        <View style={{ zIndex: 7, marginBottom: 20 }}>
-          <SelectDropdown
-            label="Estado"
-            placeholder="Selecione seu estado"
-            items={estados}
-            value={selectedEstado}
-            onChange={setSelectedEstado}
-          />
-        </View>
+        <SearchableDropdown
+          label="Estados"
+          data={estados}
+          onChange={setSelectedEstado}
+          placeholder="Digite para buscar..."
+        />
 
         <RadioGroup
           label="Faz tratamento psicologico?"
