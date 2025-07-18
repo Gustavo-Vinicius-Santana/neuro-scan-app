@@ -22,6 +22,7 @@ type FormData = {
   carga_horaria: string;
   tratamentoDetalhe: string;
   medicacaoDetalhe: string;
+  estadoCivil: string;
 };
 
 export default function FormInicial() {
@@ -33,6 +34,7 @@ export default function FormInicial() {
   const [selectedEscolaridade, setSelectedEscolaridade] = useState<ISelectItem<string> | null>(null);
   const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
   const [selecteMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
+  const [ selectedEstadoCivil, setSelectedEstadoCivil] = useState<ISelectItem<string> | null>(null);
   const [tratamentoDetalhe, setTratamentoDetalhe] = useState("");
   const [medicaDetalhe, setMedicaDetalhe] = useState("");
 
@@ -51,9 +53,10 @@ export default function FormInicial() {
       selectedEstado !== null &&
       selectedEscolaridade !== null &&
       selectedTratamento !== null &&
-      selecteMedica !== null
+      selecteMedica !== null &&
+      selectedEstadoCivil !== null
     );
-  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica]);
+  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica, selectedEstadoCivil]);
 
   const isAllValid = isValid && isCustomValid;
 
@@ -118,6 +121,13 @@ export default function FormInicial() {
     { label: "Nao", value: "nao" },
   ];
 
+  const estadosCivil = [
+    { label: "Solteiro", value: "solteiro" },
+    { label: "Casado", value: "casado" },
+    { label: "Divorciado", value: "divorciado" },
+    { label: "Viuvo", value: "viuvo" },
+  ];
+
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Cadastro</Text>
@@ -168,14 +178,26 @@ export default function FormInicial() {
           iconName="mail"
         />
 
-        <InputNumber
-          label="Renda mensal"
-          placeholder="Informe sua renda"
-          name="renda"
-          control={control}
-          rules={{ required: true }}
-          iconName="cash"
-        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }} >
+          <InputNumber
+            label="Renda mensal"
+            placeholder="Informe sua renda"
+            name="renda"
+            control={control}
+            rules={{ required: true }}
+            iconName="cash"
+            width="48%"
+          />
+
+          <SelectDropdown
+            label="Estado civil"
+            placeholder="Selecione o estado civil"
+            items={estadosCivil}
+            value={selectedEstadoCivil}
+            onChange={setSelectedEstadoCivil}
+            width="48%"
+          />
+        </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <InputText
@@ -242,7 +264,7 @@ export default function FormInicial() {
 
         <View style={{  alignItems: "center"}}>
           <RadioGroup
-            label="Toma alguma medicação?"
+            label="Toma alguma medicação psiquiatrica?"
             options={option}
             value={selecteMedica?.value ?? null}
             onChange={(newValue) => {
