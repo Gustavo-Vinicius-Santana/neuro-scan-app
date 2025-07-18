@@ -20,6 +20,8 @@ type FormData = {
   renda: string;
   ocupacao: string;
   carga_horaria: string;
+  tratamentoDetalhe: string;
+  medicacaoDetalhe: string;
 };
 
 export default function FormInicial() {
@@ -31,6 +33,8 @@ export default function FormInicial() {
   const [selectedEscolaridade, setSelectedEscolaridade] = useState<ISelectItem<string> | null>(null);
   const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
   const [selecteMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
+  const [tratamentoDetalhe, setTratamentoDetalhe] = useState("");
+  const [medicaDetalhe, setMedicaDetalhe] = useState("");
 
   const {
     control,
@@ -212,27 +216,53 @@ export default function FormInicial() {
           placeholder="Digite para buscar..."
         />
 
-        <RadioGroup
-          label="Faz tratamento psicologico?"
-          options={option}
-          value={selectedTratamento?.value ?? null}
-          onChange={(newValue) => {
-            const item = option.find((s) => s.value === newValue) || null;
-            setSelectedTratamento(item);
-          }}
-          horizontal
-        />
+        <View style={{  alignItems: "center"}}>   
+          <RadioGroup
+            label="Faz tratamento psicologico?"
+            options={option}
+            value={selectedTratamento?.value ?? null}
+            onChange={(newValue) => {
+              const item = option.find((s) => s.value === newValue) || null;
+              setSelectedTratamento(item);
+              if (newValue !== "sim") setTratamentoDetalhe("");
+            }}
+            horizontal
+          />
+          {selectedTratamento?.value === "sim" && (
+            <InputText
+              placeholder="Digite qual tratamento"
+              name="tratamentoDetalhe"
+              control={control}
+              rules={{ required: true }}
+              iconName="help-circle"
+              width="50%"
+            />
+          )}
+        </View>
 
-        <RadioGroup
-          label="Toma alguma medicação?"
-          options={option}
-          value={selecteMedica?.value ?? null}
-          onChange={(newValue) => {
-            const item = option.find((s) => s.value === newValue) || null;
-            setSelectedMedica(item);
-          }}
-          horizontal
-        />
+        <View style={{  alignItems: "center"}}>
+          <RadioGroup
+            label="Toma alguma medicação?"
+            options={option}
+            value={selecteMedica?.value ?? null}
+            onChange={(newValue) => {
+              const item = option.find((s) => s.value === newValue) || null;
+              setSelectedMedica(item);
+              if (newValue !== "sim") setMedicaDetalhe("");
+            }}
+            horizontal
+          />
+          {selecteMedica?.value === "sim" && (
+            <InputText
+              placeholder="Digite qual medicação"
+              name="medicacaoDetalhe"
+              control={control}
+              rules={{ required: true }}
+              iconName="help-circle"
+              width="50%"
+            />
+          )}
+        </View>
 
         <View style={{ alignItems: "center" }}>
           <BtnForm title="Ir para formulario Dass-21" onPress={handleSubmit(goToDass)} disabled={!isAllValid} />

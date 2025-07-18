@@ -9,7 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 type Props<T extends FieldValues> = {
-  label: string;
+  label?: string;
   placeholder: string;
   name: FieldPath<T>;
   control: Control<T>;
