@@ -178,7 +178,7 @@ export default function FormInicial() {
           iconName="mail"
         />
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }} >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1 }} >
           <InputNumber
             label="Renda mensal"
             placeholder="Informe sua renda"

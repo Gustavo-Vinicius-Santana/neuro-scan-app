@@ -7,6 +7,7 @@ type Pergunta = {
   cliqueResposta1: number;
   cliqueResposta2: number;
   cliqueResposta3: number;
+  cliqueResposta4: number;
 };
 
 type StoreState = {
@@ -27,6 +28,7 @@ const perguntaInicial: Pergunta = {
   cliqueResposta1: 0,
   cliqueResposta2: 0,
   cliqueResposta3: 0,
+  cliqueResposta4: 0,
 };
 
 export const useQuestionStore = create<StoreState>((set) => ({
