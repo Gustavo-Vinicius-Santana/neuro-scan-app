@@ -73,6 +73,12 @@ export default function ResultCapc() {
                         <Text style={styles.detail}>
                             Clique Resposta 3: {pergunta.cliqueResposta3 ?? 0} vezes
                         </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 4: {pergunta.cliqueResposta4 ?? 0} vezes
+                        </Text>
+                        <Text style={styles.detail}>
+                            Clique Resposta 5: {pergunta.cliqueResposta5 ?? 0} vezes
+                        </Text>
                     </View>
                 ))}
             </ScrollView>

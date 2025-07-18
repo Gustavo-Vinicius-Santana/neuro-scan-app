@@ -7,9 +7,11 @@ import useInicialForm from "@/lib/stores/useInicialForm";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
-import SelectDropdown from "@/components/selectDropdown/selectDropdown";
+import SelectDropdown from "@/components/dropdowns/selectDropdown";
 import RadioGroup from "@/components/groupButtons/RadioGroup";
 import { ISelectItem } from "rn-custom-select-dropdown";
+
+import SearchableDropdown from "@/components/dropdowns/searchDropdown";
 
 type FormData = {
   name: string;
@@ -18,6 +20,9 @@ type FormData = {
   renda: string;
   ocupacao: string;
   carga_horaria: string;
+  tratamentoDetalhe: string;
+  medicacaoDetalhe: string;
+  estadoCivil: string;
 };
 
 export default function FormInicial() {
@@ -29,6 +34,9 @@ export default function FormInicial() {
   const [selectedEscolaridade, setSelectedEscolaridade] = useState<ISelectItem<string> | null>(null);
   const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
   const [selecteMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
+  const [ selectedEstadoCivil, setSelectedEstadoCivil] = useState<ISelectItem<string> | null>(null);
+  const [tratamentoDetalhe, setTratamentoDetalhe] = useState("");
+  const [medicaDetalhe, setMedicaDetalhe] = useState("");
 
   const {
     control,
@@ -45,9 +53,10 @@ export default function FormInicial() {
       selectedEstado !== null &&
       selectedEscolaridade !== null &&
       selectedTratamento !== null &&
-      selecteMedica !== null
+      selecteMedica !== null &&
+      selectedEstadoCivil !== null
     );
-  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica]);
+  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica, selectedEstadoCivil]);
 
   const isAllValid = isValid && isCustomValid;
 
@@ -112,6 +121,13 @@ export default function FormInicial() {
     { label: "Nao", value: "nao" },
   ];
 
+  const estadosCivil = [
+    { label: "Solteiro", value: "solteiro" },
+    { label: "Casado", value: "casado" },
+    { label: "Divorciado", value: "divorciado" },
+    { label: "Viuvo", value: "viuvo" },
+  ];
+
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Cadastro</Text>
@@ -162,14 +178,26 @@ export default function FormInicial() {
           iconName="mail"
         />
 
-        <InputNumber
-          label="Renda mensal"
-          placeholder="Informe sua renda"
-          name="renda"
-          control={control}
-          rules={{ required: true }}
-          iconName="cash"
-        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1 }} >
+          <InputNumber
+            label="Renda mensal"
+            placeholder="Informe sua renda"
+            name="renda"
+            control={control}
+            rules={{ required: true }}
+            iconName="cash"
+            width="48%"
+          />
+
+          <SelectDropdown
+            label="Estado civil"
+            placeholder="Selecione o estado civil"
+            items={estadosCivil}
+            value={selectedEstadoCivil}
+            onChange={setSelectedEstadoCivil}
+            width="48%"
+          />
+        </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <InputText
@@ -203,37 +231,60 @@ export default function FormInicial() {
           />
         </View>
 
-        <View style={{ zIndex: 7, marginBottom: 20 }}>
-          <SelectDropdown
-            label="Estado"
-            placeholder="Selecione seu estado"
-            items={estados}
-            value={selectedEstado}
-            onChange={setSelectedEstado}
+        <SearchableDropdown
+          label="Estados"
+          data={estados}
+          onChange={setSelectedEstado}
+          placeholder="Digite para buscar..."
+        />
+
+        <View style={{  alignItems: "center"}}>   
+          <RadioGroup
+            label="Faz tratamento psicologico?"
+            options={option}
+            value={selectedTratamento?.value ?? null}
+            onChange={(newValue) => {
+              const item = option.find((s) => s.value === newValue) || null;
+              setSelectedTratamento(item);
+              if (newValue !== "sim") setTratamentoDetalhe("");
+            }}
+            horizontal
           />
+          {selectedTratamento?.value === "sim" && (
+            <InputText
+              placeholder="Digite qual tratamento"
+              name="tratamentoDetalhe"
+              control={control}
+              rules={{ required: true }}
+              iconName="help-circle"
+              width="50%"
+            />
+          )}
         </View>
 
-        <RadioGroup
-          label="Faz tratamento psicologico?"
-          options={option}
-          value={selectedTratamento?.value ?? null}
-          onChange={(newValue) => {
-            const item = option.find((s) => s.value === newValue) || null;
-            setSelectedTratamento(item);
-          }}
-          horizontal
-        />
-
-        <RadioGroup
-          label="Toma alguma medicação?"
-          options={option}
-          value={selecteMedica?.value ?? null}
-          onChange={(newValue) => {
-            const item = option.find((s) => s.value === newValue) || null;
-            setSelectedMedica(item);
-          }}
-          horizontal
-        />
+        <View style={{  alignItems: "center"}}>
+          <RadioGroup
+            label="Toma alguma medicação psiquiatrica?"
+            options={option}
+            value={selecteMedica?.value ?? null}
+            onChange={(newValue) => {
+              const item = option.find((s) => s.value === newValue) || null;
+              setSelectedMedica(item);
+              if (newValue !== "sim") setMedicaDetalhe("");
+            }}
+            horizontal
+          />
+          {selecteMedica?.value === "sim" && (
+            <InputText
+              placeholder="Digite qual medicação"
+              name="medicacaoDetalhe"
+              control={control}
+              rules={{ required: true }}
+              iconName="help-circle"
+              width="50%"
+            />
+          )}
+        </View>
 
         <View style={{ alignItems: "center" }}>
           <BtnForm title="Ir para formulario Dass-21" onPress={handleSubmit(goToDass)} disabled={!isAllValid} />
