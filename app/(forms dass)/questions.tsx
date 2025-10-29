@@ -24,6 +24,8 @@ export default function Questions() {
         setTempoResposta,
       }}
       finishRoute="/(form ffmq)/welcome"
+
+      endpoint="http://localhost:3001/api/test-respostas"
     />
   );
 }
