@@ -1,6 +1,7 @@
 import QuestionnaireTemplate from "@/components/templates/QuestionnaireTemplate";
 import { useQuestionStore } from "@/lib/stores/useFormDass";
 import { dassQuestions } from "@/lib/questions/QuestionsDass";
+import QuestionnaireTemplateZip from "@/components/templates/QuestionnaireTemplateZip";
 
 export default function Questions() {
   const {
@@ -13,7 +14,7 @@ export default function Questions() {
 
   // do 1 até 21
   return (
-    <QuestionnaireTemplate
+    <QuestionnaireTemplateZip
       questions={dassQuestions}
       sensorKey="DASS"
       store={{
