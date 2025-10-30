@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
-interface SensorSample {
+export interface SensorSample {
   timestamp: string;
   eixo_x: number;
   eixo_y: number;
@@ -10,7 +10,7 @@ interface SensorSample {
 export function useAccelerometerWeb(resetKey?: any) {
   const [samples, setSamples] = useState<SensorSample[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const activeRef = useRef<boolean>(true); // controla start/pause
+  const activeRef = useRef<boolean>(true);
   const accelRef = useRef({ x: 0, y: 0, z: 0 });
 
   const start = useCallback(() => {
@@ -19,6 +19,10 @@ export function useAccelerometerWeb(resetKey?: any) {
 
   const pause = useCallback(() => {
     activeRef.current = false;
+  }, []);
+
+  const clear = useCallback(() => {
+    setSamples([]); // Limpa totalmente o array
   }, []);
 
   useEffect(() => {
@@ -55,12 +59,11 @@ export function useAccelerometerWeb(resetKey?: any) {
     };
   }, [resetKey]);
 
-  // Reseta samples sempre que resetKey muda
   useEffect(() => {
     setSamples([]);
   }, [resetKey]);
 
-  return { samples, start, pause };
+  return { samples, start, pause, clear };
 }
 
 export function useGyroscopeWeb(resetKey?: any) {
@@ -75,6 +78,10 @@ export function useGyroscopeWeb(resetKey?: any) {
 
   const pause = useCallback(() => {
     activeRef.current = false;
+  }, []);
+
+  const clear = useCallback(() => {
+    setSamples([]); // Limpa totalmente o array
   }, []);
 
   useEffect(() => {
@@ -115,5 +122,5 @@ export function useGyroscopeWeb(resetKey?: any) {
     setSamples([]);
   }, [resetKey]);
 
-  return { samples, start, pause };
+  return { samples, start, pause, clear };
 }

@@ -12,7 +12,7 @@ type Pergunta = {
 
 type StoreState = {
   perguntas: Pergunta[];
-  setResposta: (index: number, resposta: number) => void;
+  setResposta: (index: number, resposta: number | null) => void;
   incrementaClique: (index: number, resposta: number) => void;
   setTempo: (index: number, tempo: number) => void;
   setTempoResposta: (index: number, tempoResposta: number) => void;
