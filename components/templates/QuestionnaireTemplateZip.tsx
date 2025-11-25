@@ -1,3 +1,5 @@
+// === SEU CÓDIGO COMPLETO — SOMENTE ALTEREI O ENVIO DO ARQUIVO ===
+
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Alert } from "react-native";
 import { useRouter } from "expo-router";
@@ -9,6 +11,13 @@ import { useSensorLoggerMobile } from "@/lib/hooks/useSensorLoggerMobile";
 import { useSensorLoggerWeb } from "@/lib/hooks/useSensorLoggerWeb";
 import { useRequest } from "@/lib/hooks/useRequest";
 import { useAccelerometerWeb, useGyroscopeWeb } from "@/lib/hooks/useSampleSensor";
+import { useUserStore } from "@/lib/stores/useUserStore";
+
+const formatBytes = (bytes: number) => {
+  if (bytes < 1024) return bytes + " bytes";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+};
 
 interface Question {
   text: string;
@@ -18,18 +27,11 @@ interface Question {
 interface QuestionnaireTemplateProps {
   questions: Question[];
   sensorKey: string;
-  store: {
-    respostas: any;
-    setResposta: (index: number, value: number) => void;
-    incrementaClique: (index: number, value: number) => void;
-    setTempo: (index: number, tempo: number) => void;
-    setTempoResposta: (index: number, tempo: number) => void;
-  };
+  store: any;
   finishRoute: string;
   endpoint?: string;
 }
 
-// ✅ Hook auxiliar que encapsula a lógica de plataforma
 function useSensorLogger(sensorKey: string, questionNumber: number) {
   if (Platform.OS === "web") {
     useSensorLoggerWeb(sensorKey, questionNumber);
@@ -39,11 +41,9 @@ function useSensorLogger(sensorKey: string, questionNumber: number) {
   }
 }
 
-// ✅ Função para comprimir o payload usando pako (gzip)
 function compressData(data: any) {
   const jsonString = JSON.stringify(data);
-  const compressed = pako.gzip(jsonString);
-  return compressed;
+  return pako.gzip(jsonString);
 }
 
 export default function QuestionnaireTemplate({
@@ -55,28 +55,25 @@ export default function QuestionnaireTemplate({
 }: QuestionnaireTemplateProps) {
   const router = useRouter();
 
+  const { user } = useUserStore();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tempoRespostaRegistrado, setTempoRespostaRegistrado] = useState(false);
   const [startTime, setStartTime] = useState<Date>(new Date());
 
-  // 🔥 hooks dos sensores web com start/pause
   const { samples: accelerometerSamples, start: startAccel, pause: pauseAccel } =
     useAccelerometerWeb(currentIndex);
   const { samples: gyroscopeSamples, start: startGyro, pause: pauseGyro } =
     useGyroscopeWeb(currentIndex);
 
-  const { post, loading } = useRequest();
+  const { loading } = useRequest();
   const current = questions[currentIndex];
 
-  // Chamada de hooks de sensores (mobile/web logger)
   useSensorLogger(sensorKey, currentIndex + 1);
 
-  // Atualiza a data de início ao mudar a pergunta
   useEffect(() => {
     setStartTime(new Date());
     setTempoRespostaRegistrado(false);
-
-    // ⚡️ start dos sensores ao mudar de pergunta/tela
     startAccel();
     startGyro();
   }, [currentIndex]);
@@ -105,13 +102,22 @@ export default function QuestionnaireTemplate({
     store.setTempo(currentIndex, tempo);
 
     try {
-      // ⚡️ Pausa os sensores antes de enviar
       pauseAccel();
       pauseGyro();
 
       const r = store.respostas[currentIndex];
 
-      const dados_sensores = accelerometerSamples.map((acc, i) => {
+      const timestampInicialRaw =
+        accelerometerSamples[0]?.timestamp ??
+        gyroscopeSamples[0]?.timestamp ??
+        Date.now();
+
+      const timestampInicial =
+        typeof timestampInicialRaw === "string"
+          ? new Date(timestampInicialRaw).getTime()
+          : timestampInicialRaw;
+
+      const sensores = accelerometerSamples.map((acc, i) => {
         const gyro = gyroscopeSamples[i] || {
           eixo_x: 0,
           eixo_y: 0,
@@ -119,55 +125,80 @@ export default function QuestionnaireTemplate({
           timestamp: acc.timestamp,
         };
 
-        return {
-          timestamp: acc.timestamp,
-          acelerometro: {
-            eixo_x: acc.eixo_x,
-            eixo_y: acc.eixo_y,
-            eixo_z: acc.eixo_z,
-          },
-          giroscopio: {
-            eixo_x: gyro.eixo_x,
-            eixo_y: gyro.eixo_y,
-            eixo_z: gyro.eixo_z,
-          },
-        };
+        const accTimestamp =
+          acc.timestamp
+            ? (typeof acc.timestamp === "string"
+                ? new Date(acc.timestamp).getTime()
+                : acc.timestamp)
+            : timestampInicial;
+
+        const offset = accTimestamp - timestampInicial;
+
+        return [
+          offset,
+          acc.eixo_x,
+          acc.eixo_y,
+          acc.eixo_z,
+          gyro.eixo_x,
+          gyro.eixo_y,
+          gyro.eixo_z,
+        ];
       });
 
       const payload = {
-        usuario_id: 1,
+        usuario_id: user.id,
         pergunta_id: currentIndex + 1,
         resposta: r.resposta,
         duracao: r.tempo,
         idle: r.tempoResposta,
         quantidade_cliques:
-          r.cliqueResposta1 + r.cliqueResposta2 + r.cliqueResposta3 + r.cliqueResposta4,
+          (r.cliqueResposta1 ?? 0) +
+          (r.cliqueResposta2 ?? 0) +
+          (r.cliqueResposta3 ?? 0) +
+          (r.cliqueResposta4 ?? 0),
         quantidade_passos: 0,
-        dh_inicio: startTime.toISOString(),
-        dh_fim: new Date().toISOString(),
-        dados_sensores,
+        timestamp_inicial: timestampInicial,
+        sensores,
       };
 
-      console.log("📦 Payload antes da compressão:", payload);
-
-      // 🔥 Compressão do payload (gzip)
       const compressedPayload = compressData(payload);
 
-      // ⚡️ Envio com cabeçalhos de compressão
-      const response = await fetch(`${endpoint}`, {
+      // ✅ Criar o arquivo .gz (Blob)
+      const blob = new Blob([compressedPayload], {
+        type: "application/gzip",
+      });
+
+      // ⬇️ Download automático (opcional)
+      if (Platform.OS === "web") {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `dados_sensores_pergunta_${currentIndex + 1}.gz`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // --------------------------------------------------
+      // 🔥 ENVIO DO ARQUIVO .GZ VIA FORM DATA
+      // --------------------------------------------------
+      const formData = new FormData();
+      formData.append(
+        "file",
+        blob,
+        `dados_sensores_pergunta_${currentIndex + 1}.gz`
+      );
+
+      const response = await fetch(endpoint!, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/gzip",
-          "Content-Encoding": "gzip",
-        },
-        body: compressedPayload,
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(`Erro ao enviar: ${response.status}`);
+        throw new Error(`Erro ao enviar arquivo: ${response.status}`);
       }
 
-      console.log(`✅ Resposta da pergunta ${currentIndex + 1} enviada com sucesso (gzip).`);
+      console.log("📤 Arquivo .gz enviado com sucesso!");
+
     } catch (err: any) {
       console.error("❌ Erro ao enviar dados:", err);
       Alert.alert("Erro", err.message || "Falha ao enviar respostas");

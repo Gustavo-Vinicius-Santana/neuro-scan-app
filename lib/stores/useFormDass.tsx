@@ -3,7 +3,7 @@ import { create } from 'zustand';
 type Pergunta = {
   resposta: number | null;
   tempo: number;
-  tempoResposta: number
+  tempoResposta: number;
   cliqueResposta1: number;
   cliqueResposta2: number;
   cliqueResposta3: number;
@@ -16,6 +16,7 @@ type StoreState = {
   incrementaClique: (index: number, resposta: number) => void;
   setTempo: (index: number, tempo: number) => void;
   setTempoResposta: (index: number, tempoResposta: number) => void;
+  resetResposta: (index: number, fullReset?: boolean) => void;
   reset: () => void;
 };
 
@@ -32,49 +33,57 @@ const perguntaInicial: Pergunta = {
 };
 
 export const useQuestionStore = create<StoreState>((set) => ({
-  perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+  // cria 21 perguntas independentes
+  perguntas: Array.from({ length: TOTAL_PERGUNTAS }, () => ({ ...perguntaInicial })),
 
-  setTempoResposta: (index, tempoResposta) => {
-    set((state) => {
-      const perguntas = [...state.perguntas];
-      perguntas[index] = { ...perguntas[index], tempoResposta };
-      return { perguntas };
-    });
-  },
-
-  setResposta: (index, resposta) => {
+  setResposta: (index, resposta) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       perguntas[index] = { ...perguntas[index], resposta };
       return { perguntas };
-    });
-  },
+    }),
 
-  incrementaClique: (index, resposta) => {
+  incrementaClique: (index, resposta) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       const pergunta = perguntas[index];
 
-      const fieldName = `cliqueResposta${resposta}` as keyof Pergunta;
-      if (!(fieldName in pergunta)) return state;
+      const field = `cliqueResposta${resposta}` as keyof Pergunta;
 
       perguntas[index] = {
         ...pergunta,
-        [fieldName]: (pergunta[fieldName] as number) + 1,
+        [field]: (pergunta[field] as number) + 1,
       };
-      return { perguntas };
-    });
-  },
 
-  setTempo: (index, tempo) => {
+      return { perguntas };
+    }),
+
+  setTempo: (index, tempo) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       perguntas[index] = { ...perguntas[index], tempo };
       return { perguntas };
-    });
-  },
+    }),
+
+  setTempoResposta: (index, tempoResposta) =>
+    set((state) => {
+      const perguntas = [...state.perguntas];
+      perguntas[index] = { ...perguntas[index], tempoResposta };
+      return { perguntas };
+    }),
+
+  resetResposta: (index, fullReset = false) =>
+    set((state) => {
+      const perguntas = [...state.perguntas];
+
+      if (fullReset) {
+        perguntas[index] = { ...perguntaInicial };
+      }
+
+      return { perguntas };
+    }),
 
   reset: () => ({
-    perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+    perguntas: Array.from({ length: TOTAL_PERGUNTAS }, () => ({ ...perguntaInicial })),
   }),
 }));
