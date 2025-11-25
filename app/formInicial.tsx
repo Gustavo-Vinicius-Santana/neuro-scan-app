@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, ScrollView, Alert } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Alert, Modal, ActivityIndicator } from "react-native";
 import { useForm } from "react-hook-form";
 import { useState, useMemo } from "react";
 
@@ -167,6 +167,21 @@ export default function FormInicial() {
 
   return (
     <View style={styles.container}>
+      {/* Modal de Loading */}
+      <Modal
+        transparent={true}
+        animationType="fade"
+        visible={loading}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.loadingOverlay}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0839A2" />
+            <Text style={styles.loadingText}>Enviando dados...</Text>
+          </View>
+        </View>
+      </Modal>
+
       <Text style={styles.pageTitle}>Cadastro</Text>
       <ScrollView style={{ width: "100%", maxWidth: 500 }}>
         <InputText
@@ -345,6 +360,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#0839A2",
     marginBottom: 10,
+    textAlign: "center",
+  },
+  // Estilos para o loading
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingContainer: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 200,
+  },
+  loadingText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: "#0839A2",
+    fontWeight: "500",
     textAlign: "center",
   },
 });

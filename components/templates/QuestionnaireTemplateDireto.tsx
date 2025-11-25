@@ -11,6 +11,9 @@ import { useAccelerometerWeb, useGyroscopeWeb } from "@/lib/hooks/useSampleSenso
 import { useRequest } from "@/lib/hooks/useRequest";
 import { useUserStore } from "@/lib/stores/useUserStore";
 
+
+import { TopLoading } from "@/components/loadings/topLoading";
+
 interface Question {
   text: string;
   options: { id: number; label: string }[];
@@ -41,12 +44,12 @@ export default function QuestionnaireTemplateDireto({
   endpoint,
 }: QuestionnaireTemplateProps) {
   const router = useRouter();
-
   const { user } = useUserStore();
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false); // agora controla o TopLoading
 
-  // Controle de duração - usando useRef para valores que não trigger re-render
+  // Controle de duração
   const [tempoRespostaRegistrado, setTempoRespostaRegistrado] = useState(false);
   const startTimeRef = useRef<number>(0);
   const questionStartTimeRef = useRef<number>(0);
@@ -73,25 +76,17 @@ export default function QuestionnaireTemplateDireto({
   useSensorLoggerMobile(sensorKey, currentIndex + 1, "accelerometer");
   useSensorLoggerMobile(sensorKey, currentIndex + 1, "gyroscope");
 
-  // -----------------------------------------------------------
-  // INICIAR NOVA PERGUNTA
-  // -----------------------------------------------------------
+  // Iniciar nova pergunta
   const startNewQuestion = () => {
-    // Reset dos estados de controle
     setTempoRespostaRegistrado(false);
-    
-    // Definir o tempo de início desta pergunta específica
     questionStartTimeRef.current = Date.now();
-    
-    // Se for a primeira pergunta, também seta o startTimeRef geral
+
     if (currentIndex === 0) {
       startTimeRef.current = Date.now();
     }
 
-    // Reset da pergunta no store
     store.resetResposta(currentIndex, true);
 
-    // Configurar sensores web
     if (Platform.OS === "web") {
       clearAccel?.();
       clearGyro?.();
@@ -100,7 +95,6 @@ export default function QuestionnaireTemplateDireto({
     }
   };
 
-  // Iniciar nova pergunta quando o índice mudar
   useEffect(() => {
     startNewQuestion();
   }, [currentIndex]);
@@ -115,7 +109,7 @@ export default function QuestionnaireTemplateDireto({
     return Number(((Date.now() - startTimeRef.current) / 1000).toFixed(2));
   };
 
-  // Registrar resposta
+  // Responder
   const handleAnswer = (id: number) => {
     const tempoDecorrido = getElapsedSeconds();
 
@@ -131,32 +125,23 @@ export default function QuestionnaireTemplateDireto({
 
   const respostaAtual = store.respostas[currentIndex]?.resposta ?? null;
 
+  // Próxima / Enviar
   const handleNext = async () => {
+    setIsSubmitting(true);
+
     const tempoTotalPergunta = getElapsedSeconds();
     const tempoTotalQuestionario = getTotalElapsedSeconds();
-    
-    console.log(`⏱️ Pergunta ${currentIndex + 1}:`, {
-      tempoPergunta: tempoTotalPergunta,
-      tempoTotal: tempoTotalQuestionario,
-      idle: store.respostas[currentIndex]?.tempoResposta
-    });
-
-    // ✅ CORREÇÃO: Atualizar o store com o tempo correto
-    store.setTempo(currentIndex, tempoTotalPergunta);
-
-    // ✅ CORREÇÃO: Pequena pausa para garantir que o store foi atualizado
-    await new Promise(resolve => setTimeout(resolve, 10));
 
     try {
+      store.setTempo(currentIndex, tempoTotalPergunta);
+      await new Promise(resolve => setTimeout(resolve, 10));
+
       if (Platform.OS === "web") {
         pauseAccel();
         pauseGyro();
       }
 
-      // ✅ CORREÇÃO: Usar o tempo calculado diretamente em vez de confiar no store
       const r = store.respostas[currentIndex];
-      
-      // ✅ CORREÇÃO: Se r.tempo for 0, usar tempoTotalPergunta
       const duracaoFinal = r.tempo > 0 ? r.tempo : tempoTotalPergunta;
 
       const firstAccTs = accelerometerSamples[0]?.timestamp ?? null;
@@ -201,8 +186,8 @@ export default function QuestionnaireTemplateDireto({
         usuario_id: 1,
         pergunta_id: initialId + currentIndex,
         resposta: r.resposta,
-        duracao: duracaoFinal, // ✅ CORREÇÃO: Usar valor garantido
-        idle: r.tempoResposta, // Tempo até primeira resposta
+        duracao: duracaoFinal,
+        idle: r.tempoResposta,
         quantidade_cliques:
           (r.cliqueResposta1 ?? 0) +
           (r.cliqueResposta2 ?? 0) +
@@ -213,13 +198,6 @@ export default function QuestionnaireTemplateDireto({
         sensores,
       };
 
-      console.log("📦 PAYLOAD FINAL:", payload);
-      console.log("⏰ TEMPO VERIFICAÇÃO:", {
-        storeTempo: r.tempo,
-        calculadoAgora: tempoTotalPergunta,
-        usadoNoPayload: duracaoFinal
-      });
-
       if (endpoint) {
         const response = await fetch(`${endpoint}`, {
           method: "POST",
@@ -229,47 +207,55 @@ export default function QuestionnaireTemplateDireto({
 
         if (!response.ok) throw new Error(await response.text());
       }
+
+      if (currentIndex < questions.length - 1) {
+        setCurrentIndex((p) => p + 1);
+      } else {
+        router.replace(finishRoute as any);
+      }
     } catch (err: any) {
       Alert.alert("Erro", err.message || "Falha ao enviar dados");
-      return;
-    }
-
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex((p) => p + 1);
-    } else {
-      router.replace(finishRoute as any);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ alignItems: "flex-start" }}>
-        <Text style={{ color: "#0839A2", fontSize: 16 }}>
-          PERGUNTA {currentIndex + 1} de {questions.length}
-        </Text>
+    <>
+      {/* 👉 Loading discreto no topo */}
+      <TopLoading visible={isSubmitting} />
 
-        <Text style={styles.question}>{current.text}</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={{ alignItems: "flex-start" }}>
+          <Text style={{ color: "#0839A2", fontSize: 16 }}>
+            PERGUNTA {currentIndex + 1} de {questions.length}
+          </Text>
 
-      <OptionGroup
-        options={current.options}
-        selected={respostaAtual}
-        onSelect={handleAnswer}
-      />
+          <Text style={styles.question}>{current.text}</Text>
+        </View>
 
-      <BtnForm
-        title={
-          currentIndex === questions.length - 1
-            ? loading
+        <OptionGroup
+          options={current.options}
+          selected={respostaAtual}
+          onSelect={handleAnswer}
+        />
+
+        <BtnForm
+          title={
+            currentIndex === questions.length - 1
+              ? isSubmitting
+                ? "Enviando..."
+                : "Finalizar"
+              : isSubmitting
               ? "Enviando..."
-              : "Finalizar"
-            : "Próximo"
-        }
-        color="#4F46E5"
-        onPress={handleNext}
-        disabled={respostaAtual === null || loading}
-      />
-    </ScrollView>
+              : "Próximo"
+          }
+          color="#4F46E5"
+          onPress={handleNext}
+          disabled={respostaAtual === null || isSubmitting}
+        />
+      </ScrollView>
+    </>
   );
 }
 
