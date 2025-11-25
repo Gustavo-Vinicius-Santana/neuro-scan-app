@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 type PerguntaFfmq = {
+  idGlobal: number;
   resposta: number | null;
   tempo: number;
   tempoResposta: number;
@@ -21,9 +22,11 @@ type FfmqStoreState = {
   reset: () => void;
 };
 
-const TOTAL_PERGUNTAS_FFMQ = 22;
+const TOTAL_PERGUNTAS_FFMQ = 39;
 
-const perguntaInicialFfmq: PerguntaFfmq = {
+// IDs globais: 22 a 60
+const criaPerguntaInicial = (id: number): PerguntaFfmq => ({
+  idGlobal: id,
   resposta: null,
   tempo: 0,
   tempoResposta: 0,
@@ -32,11 +35,13 @@ const perguntaInicialFfmq: PerguntaFfmq = {
   cliqueResposta3: 0,
   cliqueResposta4: 0,
   cliqueResposta5: 0,
-};
+});
 
-export const useCapcStore = create<FfmqStoreState>((set) => ({
-  // cria 22 perguntas independentes
-  perguntas: Array.from({ length: TOTAL_PERGUNTAS_FFMQ }, () => ({ ...perguntaInicialFfmq })),
+export const useFfmqStore = create<FfmqStoreState>((set) => ({
+  perguntas: Array.from(
+    { length: TOTAL_PERGUNTAS_FFMQ },
+    (_, i) => criaPerguntaInicial(82 + i)
+  ),
 
   setResposta: (index, resposta) =>
     set((state) => {
@@ -79,7 +84,9 @@ export const useCapcStore = create<FfmqStoreState>((set) => ({
       const perguntas = [...state.perguntas];
 
       if (fullReset) {
-        perguntas[index] = { ...perguntaInicialFfmq };
+        // mantém o mesmo idGlobal ao resetar
+        const id = perguntas[index].idGlobal;
+        perguntas[index] = criaPerguntaInicial(id);
       } else {
         perguntas[index] = {
           ...perguntas[index],
@@ -92,6 +99,9 @@ export const useCapcStore = create<FfmqStoreState>((set) => ({
     }),
 
   reset: () => ({
-    perguntas: Array.from({ length: TOTAL_PERGUNTAS_FFMQ }, () => ({ ...perguntaInicialFfmq })),
+    perguntas: Array.from(
+      { length: TOTAL_PERGUNTAS_FFMQ },
+      (_, i) => criaPerguntaInicial(22 + i)
+    ),
   }),
 }));

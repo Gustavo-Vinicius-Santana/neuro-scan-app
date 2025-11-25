@@ -17,6 +17,7 @@ interface Question {
 }
 
 interface QuestionnaireTemplateProps {
+  initialId: number;
   questions: Question[];
   sensorKey: string;
   store: {
@@ -33,6 +34,7 @@ interface QuestionnaireTemplateProps {
 
 export default function QuestionnaireTemplateDireto({
   questions,
+  initialId,
   sensorKey,
   store,
   finishRoute,
@@ -197,7 +199,7 @@ export default function QuestionnaireTemplateDireto({
 
       const payload = {
         usuario_id: 1,
-        pergunta_id: currentIndex + 1,
+        pergunta_id: initialId + currentIndex,
         resposta: r.resposta,
         duracao: duracaoFinal, // ✅ CORREÇÃO: Usar valor garantido
         idle: r.tempoResposta, // Tempo até primeira resposta

@@ -1,5 +1,5 @@
 import QuestionnaireTemplate from "@/components/templates/QuestionnaireTemplate";
-import { useCapcStore } from "@/lib/stores/useFormFfmq";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
 import { capcQuestions } from "@/lib/questions/QuestionsCapc";
 import QuestionnaireTemplateDireto from "@/components/templates/QuestionnaireTemplateDireto";
 
@@ -16,6 +16,7 @@ export default function Questions(){
     // do 1 até 22
     return(
         <QuestionnaireTemplateDireto
+            initialId={121}
             questions={capcQuestions}
             sensorKey="CAPC"
             store={{

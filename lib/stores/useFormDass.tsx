@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 type Pergunta = {
+  idGlobal: number;
   resposta: number | null;
   tempo: number;
   tempoResposta: number;
@@ -20,9 +21,11 @@ type StoreState = {
   reset: () => void;
 };
 
-const TOTAL_PERGUNTAS = 21;
+const TOTAL = 21;
 
-const perguntaInicial: Pergunta = {
+// IDs 1–21
+const perguntaInicial = (id: number): Pergunta => ({
+  idGlobal: id,
   resposta: null,
   tempo: 0,
   tempoResposta: 0,
@@ -30,11 +33,10 @@ const perguntaInicial: Pergunta = {
   cliqueResposta2: 0,
   cliqueResposta3: 0,
   cliqueResposta4: 0,
-};
+});
 
 export const useQuestionStore = create<StoreState>((set) => ({
-  // cria 21 perguntas independentes
-  perguntas: Array.from({ length: TOTAL_PERGUNTAS }, () => ({ ...perguntaInicial })),
+  perguntas: Array.from({ length: TOTAL }, (_, i) => perguntaInicial(i + 61)),
 
   setResposta: (index, resposta) =>
     set((state) => {
@@ -47,7 +49,6 @@ export const useQuestionStore = create<StoreState>((set) => ({
     set((state) => {
       const perguntas = [...state.perguntas];
       const pergunta = perguntas[index];
-
       const field = `cliqueResposta${resposta}` as keyof Pergunta;
 
       perguntas[index] = {
@@ -72,18 +73,15 @@ export const useQuestionStore = create<StoreState>((set) => ({
       return { perguntas };
     }),
 
-  resetResposta: (index, fullReset = false) =>
+  resetResposta: (index) =>
     set((state) => {
       const perguntas = [...state.perguntas];
-
-      if (fullReset) {
-        perguntas[index] = { ...perguntaInicial };
-      }
-
+      perguntas[index].resposta = null;
+      perguntas[index].tempoResposta = 0;
       return { perguntas };
     }),
 
   reset: () => ({
-    perguntas: Array.from({ length: TOTAL_PERGUNTAS }, () => ({ ...perguntaInicial })),
+    perguntas: Array.from({ length: TOTAL }, (_, i) => perguntaInicial(i + 1)),
   }),
 }));

@@ -1,8 +1,8 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useCapcStore } from "@/lib/stores/useFormFfmq";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 
 export default function ResultCapc() {
-    const { perguntas } = useCapcStore();
+    const { perguntas } = useFfmqStore();
 
     const calcularPontuacao = (indices: number[]) => {
         return indices.reduce((sum, idx) => {

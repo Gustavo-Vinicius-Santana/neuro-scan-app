@@ -1,5 +1,5 @@
 import QuestionnaireTemplate from "@/components/templates/QuestionnaireTemplate";
-import { useFfmqStore } from "@/lib/stores/useFormCapc";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
 import { ffmqQuestions } from "@/lib/questions/QuestionsFfmq";
 import QuestionnaireTemplateDireto from "@/components/templates/QuestionnaireTemplateDireto";
 
@@ -16,6 +16,7 @@ export default function Questions(){
     // do 1 até 39
     return(
         <QuestionnaireTemplateDireto
+            initialId={82}
             questions={ffmqQuestions}
             sensorKey="FFMQ"
             store={{
