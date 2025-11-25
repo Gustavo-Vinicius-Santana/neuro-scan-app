@@ -24,12 +24,7 @@ export default function BtnForm({
         onPress={onPress}
         disabled={disabled}
       >
-        <Text 
-          style={[
-            styles.buttonText, 
-            disabled && styles.buttonTextDisabled
-          ]}
-        >
+        <Text style={[styles.buttonText, disabled && styles.buttonTextDisabled]}>
           {title}
         </Text>
       </TouchableOpacity>
@@ -44,16 +39,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     marginTop: 10,
-    width: 250,
-    flexWrap: "wrap",
+    width: 250
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center",
-    flexWrap: "wrap", // Permite quebra de linha
-    flexShrink: 1, // Permite encolher
   },
   buttonTextDisabled: {
     color: "#D3D3D3",

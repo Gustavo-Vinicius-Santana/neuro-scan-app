@@ -31,6 +31,47 @@ type FormData = {
   medicacoes?: string;
 };
 
+// Componente de Toast simples
+const Toast = ({ message, visible, onHide }: { message: string; visible: boolean; onHide: () => void }) => {
+  if (!visible) return null;
+
+  // Auto-esconde após 3 segundos
+  setTimeout(onHide, 3000);
+
+  return (
+    <View style={toastStyles.container}>
+      <Text style={toastStyles.text}>{message}</Text>
+    </View>
+  );
+};
+
+const toastStyles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 50,
+    left: '50%',
+    transform: [{ translateX: -150 }],
+    backgroundColor: '#FF4444',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    zIndex: 1000,
+    width: 300,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  text: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});
+
 export default function FormInicial() {
   const router = useRouter();
   const { setFormData } = useInicialForm();
@@ -43,6 +84,17 @@ export default function FormInicial() {
   const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
   const [selectedMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
   const [selectedEstadoCivil, setSelectedEstadoCivil] = useState<ISelectItem<string> | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
+
+  const hideToast = () => {
+    setToastVisible(false);
+  };
 
   const {
     control,
@@ -74,12 +126,21 @@ export default function FormInicial() {
   const submitAndGo = (route: string) => {
     return async (data: FormData) => {
       try {
+        // Validação do email apenas no envio
+        if (data.email && data.email.trim() !== "") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(data.email)) {
+            showToast("Por favor, digite um email válido ou deixe o campo em branco.");
+            return; // Impede o envio se o email for inválido
+          }
+        }
+
         const payload = {
           iniciais_do_nome: data.iniciais_do_nome,
-          nome: data.nome,
+          //nome: data.nome,
           idade: Number(data.idade),
           sexo: (selectedSexo?.value ?? "").toString().toUpperCase() as "M" | "F" | "O",
-          email: data.email || undefined,
+          email: data.email && data.email.trim() !== "" ? data.email : undefined,
           renda_mensal: data.renda_mensal ? Number(data.renda_mensal) : undefined,
           estado_civil: selectedEstadoCivil?.value || undefined,
           ocupacao: data.ocupacao || undefined,
@@ -106,7 +167,7 @@ export default function FormInicial() {
         // cast para satisfazer as assinaturas estritas do expo-router
         router.push(route as unknown as any);
       } catch (err: any) {
-        Alert.alert("Erro", error || err.message || "Erro ao enviar dados.");
+        showToast(error || err.message || "Erro ao enviar dados.");
       }
     };
   };
@@ -167,6 +228,13 @@ export default function FormInicial() {
 
   return (
     <View style={styles.container}>
+      {/* Toast para mensagens de erro */}
+      <Toast 
+        message={toastMessage} 
+        visible={toastVisible} 
+        onHide={hideToast} 
+      />
+
       {/* Modal de Loading */}
       <Modal
         transparent={true}
@@ -184,14 +252,14 @@ export default function FormInicial() {
 
       <Text style={styles.pageTitle}>Cadastro</Text>
       <ScrollView style={{ width: "100%", maxWidth: 500 }}>
-        <InputText
+        {/* <InputText
           label="Nome"
           placeholder="Nome"
           name="nome"
           control={control}
           rules={{ required: true }}
           iconName="person"
-        />
+        /> */}
 
         <InputText
           label="Iniciais do nome"

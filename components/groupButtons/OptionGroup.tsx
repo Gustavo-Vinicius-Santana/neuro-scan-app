@@ -33,7 +33,13 @@ export default function OptionGroup({ options, selected, onSelect }: Props) {
                   <Ionicons name="checkmark" size={12} color="#fff" />
                 )}
               </View>
-              <Text style={styles.optionText}>{option.label}</Text>
+              <Text 
+                style={styles.optionText}
+                numberOfLines={0} // Permite múltiplas linhas
+                ellipsizeMode="tail" // Adiciona "..." se necessário
+              >
+                {option.label}
+              </Text>
             </View>
           </TouchableOpacity>
         );
@@ -45,7 +51,7 @@ export default function OptionGroup({ options, selected, onSelect }: Props) {
 const styles = StyleSheet.create({
   option: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start", // Alinha ao topo para múltiplas linhas
     padding: 14,
     borderRadius: 12,
     marginBottom: 12,
@@ -56,7 +62,8 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start", // Alinha ao topo
+    flex: 1, // Ocupa todo o espaço disponível
   },
   checkbox: {
     width: 20,
@@ -68,6 +75,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
+    marginTop: 2, // Pequeno ajuste para alinhar com o texto
   },
   checkboxChecked: {
     backgroundColor: "#007BFF",
@@ -75,7 +83,9 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     color: "#7189BC",
-    flexShrink: 1,
+    flexShrink: 1, // Permite encolher
+    flexWrap: "wrap", // Permite quebra de linha
+    flex: 1, // Ocupa o espaço restante
     fontWeight: "600",
   },
 });
