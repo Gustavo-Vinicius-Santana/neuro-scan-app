@@ -30,9 +30,9 @@ export default function Result() {
         <TouchableOpacity style={styles.button} onPress={() => router.push("/resultFfmq")}>
           <Text style={styles.buttonText}>Ver Resultado FFMQ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/resultSensors")}>
+        {/* <TouchableOpacity style={styles.button} onPress={() => router.push("/resultSensors")}>
           <Text style={styles.buttonText}>Ver Resultado Sensores</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
