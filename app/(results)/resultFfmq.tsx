@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useFfmqStore } from "@/lib/stores/useFormFfmq";
+import { useFfmqStore } from "@/lib/stores/useFormCapc";
 
 export default function ResultFfmq() {
     const { perguntas } = useFfmqStore();
