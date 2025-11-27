@@ -1,10 +1,12 @@
-import QuestionnaireTemplate from "@/components/templates/QuestionnaireTemplate";
 import { useQuestionStore } from "@/lib/stores/useFormDass";
 import { dassQuestions } from "@/lib/questions/QuestionsDass";
 import QuestionnaireTemplateZip from "@/components/templates/QuestionnaireTemplateZip";
 import QuestionnaireTemplateDireto from "@/components/templates/QuestionnaireTemplateDireto";
+import { useEffect } from "react";
 
 export default function Questions() {
+  const api = process.env.EXPO_PUBLIC_API_URL;
+
   const {
     perguntas,
     setResposta,
@@ -28,7 +30,7 @@ export default function Questions() {
         resetResposta,
       }}
       finishRoute="/(form ffmq)/welcome"
-      endpoint="https://neuroscan-app.onrender.com/api/respostas/json"
+      endpoint={`${api}api/respostas/json`} 
     />
   );
 }
