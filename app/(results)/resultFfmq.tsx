@@ -1,8 +1,10 @@
-import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useFfmqStore } from "@/lib/stores/useFormFfmq";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useCapcStore } from "@/lib/stores/useFormCapc";
+import { useRouter } from "expo-router";
 
 export default function ResultFfmq() {
-    const { perguntas } = useFfmqStore();
+    const { perguntas } = useCapcStore();
+    const router = useRouter();
 
     const calcularPontuacao = (indices: number[]) => {
         return indices.reduce((sum, idx) => {
@@ -25,34 +27,12 @@ export default function ResultFfmq() {
 
     return (
         <View style={styles.container}>
+            {/* Botão de Voltar */}
+            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                <Text style={styles.backText}>◀ Voltar</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Resultado do FFMQ</Text>
-
-            <View style={styles.resultsGrid}>
-                <View style={styles.card}>
-                    <Text style={styles.label}>Observação:</Text>
-                    <Text style={styles.result}>{observacao} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Descrição:</Text>
-                    <Text style={styles.result}>{descricao} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Ação Consciente:</Text>
-                    <Text style={styles.result}>{acaoConsciente} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Não Julgamento:</Text>
-                    <Text style={styles.result}>{naoJulgamento} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Não Reatividade:</Text>
-                    <Text style={styles.result}>{naoReatividade} pontos</Text>
-                </View>
-            </View>
 
             <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
 
@@ -81,7 +61,7 @@ export default function ResultFfmq() {
                             Clique Resposta 3: {pergunta.cliqueResposta3 ?? 0} vezes
                         </Text>
                         <Text style={styles.detail}>
-                            Clique Resposta 3: {pergunta.cliqueResposta4 ?? 0} vezes
+                            Clique Resposta 4: {pergunta.cliqueResposta4 ?? 0} vezes
                         </Text>
                     </View>
                 ))}
@@ -96,6 +76,21 @@ const styles = StyleSheet.create({
         backgroundColor: "#f4f4f4",
         padding: 20,
     },
+
+    backButton: {
+        marginBottom: 10,
+        alignSelf: "flex-start",
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: "#E5E7EB",
+        borderRadius: 8,
+    },
+    backText: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#374151",
+    },
+
     title: {
         fontSize: 24,
         fontWeight: "700",
@@ -109,25 +104,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         color: "#444",
     },
-    resultsGrid: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-    },
-    card: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 15,
-        width: "48%",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    scrollArea: {
-    },
+    scrollArea: {},
     responseCard: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -138,18 +115,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 2,
         elevation: 2,
-    },
-    label: {
-        fontSize: 18,
-        color: "#555",
-        fontWeight: "600",
-        marginBottom: 4,
-    },
-    result: {
-        fontSize: 22,
-        color: "#4F46E5",
-        fontWeight: "700",
-        marginBottom: 6,
     },
     questionText: {
         fontSize: 16,

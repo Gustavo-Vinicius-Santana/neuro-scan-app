@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 
 type Pergunta = {
+  idGlobal: number;
   resposta: number | null;
   tempo: number;
-  tempoResposta: number
+  tempoResposta: number;
   cliqueResposta1: number;
   cliqueResposta2: number;
   cliqueResposta3: number;
@@ -12,16 +13,19 @@ type Pergunta = {
 
 type StoreState = {
   perguntas: Pergunta[];
-  setResposta: (index: number, resposta: number) => void;
+  setResposta: (index: number, resposta: number | null) => void;
   incrementaClique: (index: number, resposta: number) => void;
   setTempo: (index: number, tempo: number) => void;
   setTempoResposta: (index: number, tempoResposta: number) => void;
+  resetResposta: (index: number, fullReset?: boolean) => void;
   reset: () => void;
 };
 
-const TOTAL_PERGUNTAS = 21;
+const TOTAL = 21;
 
-const perguntaInicial: Pergunta = {
+// IDs 1–21
+const perguntaInicial = (id: number): Pergunta => ({
+  idGlobal: id,
   resposta: null,
   tempo: 0,
   tempoResposta: 0,
@@ -29,52 +33,55 @@ const perguntaInicial: Pergunta = {
   cliqueResposta2: 0,
   cliqueResposta3: 0,
   cliqueResposta4: 0,
-};
+});
 
 export const useQuestionStore = create<StoreState>((set) => ({
-  perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+  perguntas: Array.from({ length: TOTAL }, (_, i) => perguntaInicial(i + 61)),
 
-  setTempoResposta: (index, tempoResposta) => {
-    set((state) => {
-      const perguntas = [...state.perguntas];
-      perguntas[index] = { ...perguntas[index], tempoResposta };
-      return { perguntas };
-    });
-  },
-
-  setResposta: (index, resposta) => {
+  setResposta: (index, resposta) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       perguntas[index] = { ...perguntas[index], resposta };
       return { perguntas };
-    });
-  },
+    }),
 
-  incrementaClique: (index, resposta) => {
+  incrementaClique: (index, resposta) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       const pergunta = perguntas[index];
-
-      const fieldName = `cliqueResposta${resposta}` as keyof Pergunta;
-      if (!(fieldName in pergunta)) return state;
+      const field = `cliqueResposta${resposta}` as keyof Pergunta;
 
       perguntas[index] = {
         ...pergunta,
-        [fieldName]: (pergunta[fieldName] as number) + 1,
+        [field]: (pergunta[field] as number) + 1,
       };
-      return { perguntas };
-    });
-  },
 
-  setTempo: (index, tempo) => {
+      return { perguntas };
+    }),
+
+  setTempo: (index, tempo) =>
     set((state) => {
       const perguntas = [...state.perguntas];
       perguntas[index] = { ...perguntas[index], tempo };
       return { perguntas };
-    });
-  },
+    }),
+
+  setTempoResposta: (index, tempoResposta) =>
+    set((state) => {
+      const perguntas = [...state.perguntas];
+      perguntas[index] = { ...perguntas[index], tempoResposta };
+      return { perguntas };
+    }),
+
+  resetResposta: (index) =>
+    set((state) => {
+      const perguntas = [...state.perguntas];
+      perguntas[index].resposta = null;
+      perguntas[index].tempoResposta = 0;
+      return { perguntas };
+    }),
 
   reset: () => ({
-    perguntas: Array(TOTAL_PERGUNTAS).fill(null).map(() => ({ ...perguntaInicial })),
+    perguntas: Array.from({ length: TOTAL }, (_, i) => perguntaInicial(i + 1)),
   }),
 }));

@@ -1,51 +1,108 @@
 import { useRouter } from "expo-router";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useState, useMemo } from "react";
+import { Text, View, StyleSheet, ScrollView, Alert, Modal, ActivityIndicator } from "react-native";
+import { useForm } from "react-hook-form";
+import { useState, useMemo, useEffect } from "react";
 
 import useInicialForm from "@/lib/stores/useInicialForm";
+import { useUserStore } from "@/lib/stores/useUserStore";
 import InputText from "@/components/inputs/InputText";
 import InputNumber from "@/components/inputs/InputNumber";
 import BtnForm from "@/components/buttons/btnForm";
 import SelectDropdown from "@/components/dropdowns/selectDropdown";
 import RadioGroup from "@/components/groupButtons/RadioGroup";
 import { ISelectItem } from "rn-custom-select-dropdown";
-
 import SearchableDropdown from "@/components/dropdowns/searchDropdown";
+import { useRequest } from "@/lib/hooks/useRequest";
 
 type FormData = {
-  name: string;
-  age: string;
-  email: string;
-  renda: string;
-  ocupacao: string;
-  carga_horaria: string;
-  tratamentoDetalhe: string;
-  medicacaoDetalhe: string;
-  estadoCivil: string;
+  nome: string;
+  iniciais_do_nome: string;
+  idade: string;
+  email?: string;
+  renda_mensal?: string;
+  ocupacao?: string;
+  carga_horaria_semanal?: string;
+  escolaridade?: string;
+  estado?: string;
+  estado_civil?: string;
+  faz_tratamento_psicologico?: string;
+  tratamentos?: string;
+  toma_medicacao_psiquiatrica?: string;
+  medicacoes?: string;
 };
 
+// Componente de Toast simples
+const Toast = ({ message, visible, onHide }: { message: string; visible: boolean; onHide: () => void }) => {
+  if (!visible) return null;
+
+  // Auto-esconde após 3 segundos
+  setTimeout(onHide, 3000);
+
+  return (
+    <View style={toastStyles.container}>
+      <Text style={toastStyles.text}>{message}</Text>
+    </View>
+  );
+};
+
+const toastStyles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 50,
+    left: '50%',
+    transform: [{ translateX: -150 }],
+    backgroundColor: '#FF4444',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    zIndex: 1000,
+    width: 300,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  text: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});
+
 export default function FormInicial() {
+  const api = process.env.EXPO_PUBLIC_API_URL;
+
   const router = useRouter();
   const { setFormData } = useInicialForm();
+  const { post, loading, error } = useRequest();
+  const { setUser } = useUserStore();
 
   const [selectedSexo, setSelectedSexo] = useState<ISelectItem<string> | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<ISelectItem<string> | null>(null);
   const [selectedEscolaridade, setSelectedEscolaridade] = useState<ISelectItem<string> | null>(null);
   const [selectedTratamento, setSelectedTratamento] = useState<ISelectItem<string> | null>(null);
-  const [selecteMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
-  const [ selectedEstadoCivil, setSelectedEstadoCivil] = useState<ISelectItem<string> | null>(null);
-  const [tratamentoDetalhe, setTratamentoDetalhe] = useState("");
-  const [medicaDetalhe, setMedicaDetalhe] = useState("");
+  const [selectedMedica, setSelectedMedica] = useState<ISelectItem<string> | null>(null);
+  const [selectedEstadoCivil, setSelectedEstadoCivil] = useState<ISelectItem<string> | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+  };
+
+  const hideToast = () => {
+    setToastVisible(false);
+  };
 
   const {
     control,
     handleSubmit,
     formState: { isValid },
-    watch,
-  } = useForm<FormData>({
-    mode: "onChange",
-  });
+  } = useForm<FormData>({ mode: "onChange" });
 
   const isCustomValid = useMemo(() => {
     return (
@@ -53,37 +110,80 @@ export default function FormInicial() {
       selectedEstado !== null &&
       selectedEscolaridade !== null &&
       selectedTratamento !== null &&
-      selecteMedica !== null &&
+      selectedMedica !== null &&
       selectedEstadoCivil !== null
     );
-  }, [selectedSexo, selectedEstado, selectedEscolaridade, selectedTratamento, selecteMedica, selectedEstadoCivil]);
+  }, [
+    selectedSexo,
+    selectedEstado,
+    selectedEscolaridade,
+    selectedTratamento,
+    selectedMedica,
+    selectedEstadoCivil,
+  ]);
 
   const isAllValid = isValid && isCustomValid;
 
-  const goToDass: SubmitHandler<FormData> = (data) => {
-    setFormData({
-      ...data,
-      sexo: selectedSexo?.value,
-      estado: selectedEstado?.value,
-      escolaridade: selectedEscolaridade?.value,
-    });
-    router.push("/(forms dass)/welcome");
+  // FUNÇÃO GENÉRICA: envia dados + navega
+  const submitAndGo = (route: string) => {
+    return async (data: FormData) => {
+      try {
+        // Validação do email apenas no envio
+        if (data.email && data.email.trim() !== "") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(data.email)) {
+            showToast("Por favor, digite um email válido ou deixe o campo em branco.");
+            return; // Impede o envio se o email for inválido
+          }
+        }
+
+        const payload = {
+          iniciais_do_nome: data.iniciais_do_nome,
+          //nome: data.nome,
+          idade: Number(data.idade),
+          sexo: (selectedSexo?.value ?? "").toString().toUpperCase() as "M" | "F" | "O",
+          email: data.email && data.email.trim() !== "" ? data.email : undefined,
+          renda_mensal: data.renda_mensal ? Number(data.renda_mensal) : undefined,
+          estado_civil: selectedEstadoCivil?.value || undefined,
+          ocupacao: data.ocupacao || undefined,
+          carga_horaria_semanal: data.carga_horaria_semanal ? Number(data.carga_horaria_semanal) : undefined,
+          escolaridade: selectedEscolaridade?.value || undefined,
+          estado: selectedEstado?.value || undefined,
+          faz_tratamento_psicologico: selectedTratamento?.value === "sim",
+          tratamentos: selectedTratamento?.value === "sim" ? data.tratamentos || "" : undefined,
+          toma_medicacao_psiquiatrica: selectedMedica?.value === "sim",
+          medicacoes: selectedMedica?.value === "sim" ? data.medicacoes || "" : undefined,
+        };
+
+        const response = await post(
+          `${api}api/usuarios`,
+          payload
+        );
+
+        setUser({
+          id: response.id,
+        });
+
+        setFormData(payload);
+
+        // cast para satisfazer as assinaturas estritas do expo-router
+        router.push(route as unknown as any);
+      } catch (err: any) {
+        showToast(error || err.message || "Erro ao enviar dados.");
+      }
+    };
   };
 
-  const goToFfmq = () => router.push("/(form ffmq)/welcome");
-  const goToCapc = () => router.push("/(form capc)/welcome");
-  const goToResults = () => router.push("/(results)/resultGeneral");
-
-  const sexo = [
-    { label: "Masculino", value: "masculino" },
-    { label: "Feminino", value: "feminino" },
-    { label: "Outro", value: "outro" },
+  const sexoOptions = [
+    { label: "Masculino", value: "M" },
+    { label: "Feminino", value: "F" },
+    { label: "Outro", value: "O" },
   ];
 
-  const escolaridade = [
-    { label: "Ensino Fundamental", value: "ensino fundamental" },
-    { label: "Ensino Medio", value: "ensino medio" },
-    { label: "Ensino Superior", value: "ensino superior" },
+  const escolaridadeOptions = [
+    { label: "Ensino Fundamental", value: "Ensino Fundamental" },
+    { label: "Ensino Médio", value: "Ensino Medio" },
+    { label: "Ensino Superior", value: "Superior Completo" },
   ];
 
   const estados: Array<ISelectItem<string>> = [
@@ -116,181 +216,201 @@ export default function FormInicial() {
     { label: "Tocantins", value: "TO" },
   ];
 
-  const option = [
+  const optionSimNao = [
     { label: "Sim", value: "sim" },
-    { label: "Nao", value: "nao" },
+    { label: "Não", value: "nao" },
   ];
 
   const estadosCivil = [
-    { label: "Solteiro", value: "solteiro" },
-    { label: "Casado", value: "casado" },
-    { label: "Divorciado", value: "divorciado" },
-    { label: "Viuvo", value: "viuvo" },
+    { label: "Solteiro", value: "Solteiro" },
+    { label: "Casado", value: "Casado" },
+    { label: "Divorciado", value: "Divorciado" },
+    { label: "Viúvo", value: "Viuvo" },
   ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Cadastro</Text>
+      {/* Toast para mensagens de erro */}
+      <Toast 
+        message={toastMessage} 
+        visible={toastVisible} 
+        onHide={hideToast} 
+      />
 
+      {/* Modal de Loading */}
+      <Modal
+        transparent={true}
+        animationType="fade"
+        visible={loading}
+        statusBarTranslucent={true}
+      >
+        <View style={styles.loadingOverlay}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0839A2" />
+            <Text style={styles.loadingText}>Enviando dados...</Text>
+          </View>
+        </View>
+      </Modal>
+
+      <Text style={styles.pageTitle}>Cadastro</Text>
       <ScrollView style={{ width: "100%", maxWidth: 500 }}>
-        <InputText
+        {/* <InputText
           label="Nome"
           placeholder="Nome"
-          name="name"
+          name="nome"
           control={control}
           rules={{ required: true }}
           iconName="person"
+        /> */}
+
+        <InputText
+          label="Iniciais do nome"
+          placeholder="Ex: TST"
+          name="iniciais_do_nome"
+          control={control}
+          rules={{ required: true }}
+          iconName="text"
         />
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+            zIndex: 10,
+          }}
+        >
           <InputNumber
             label="Idade"
-            placeholder="Sua idade"
-            name="age"
+            placeholder="Idade"
+            name="idade"
             control={control}
             rules={{ required: true }}
             iconName="calendar"
             width="48%"
           />
-
           <SelectDropdown
             label="Sexo"
-            placeholder="Selecione seu sexo"
-            items={sexo}
+            placeholder="Selecione"
+            items={sexoOptions}
             value={selectedSexo}
             onChange={setSelectedSexo}
             width="48%"
           />
         </View>
 
-        <InputText
-          label="Email"
-          placeholder="Seu email"
-          name="email"
+        <InputText label="Email" placeholder="Email" name="email" control={control} iconName="mail" />
+
+        <InputNumber
+          label="Renda Mensal"
+          placeholder="R$"
+          name="renda_mensal"
           control={control}
-          rules={{
-            required: true,
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Digite um email válido",
-            },
-          }}
-          iconName="mail"
+          iconName="cash"
         />
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", zIndex: 1 }} >
-          <InputNumber
-            label="Renda mensal"
-            placeholder="Informe sua renda"
-            name="renda"
-            control={control}
-            rules={{ required: true }}
-            iconName="cash"
-            width="48%"
-          />
-
-          <SelectDropdown
-            label="Estado civil"
-            placeholder="Selecione o estado civil"
-            items={estadosCivil}
-            value={selectedEstadoCivil}
-            onChange={setSelectedEstadoCivil}
-            width="48%"
-          />
-        </View>
-
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", zIndex: 10 }}>
           <InputText
-            width="48%"
             label="Ocupação"
             placeholder="Sua ocupação"
             name="ocupacao"
             control={control}
-            rules={{ required: true }}
             iconName="briefcase"
-          />
-
-          <InputNumber
             width="48%"
-            label="Carga horária (horas)"
-            placeholder="Sua carga horária"
-            name="carga_horaria"
+          />
+          <InputNumber
+            label="Carga horária semanal"
+            placeholder="Horas"
+            name="carga_horaria_semanal"
             control={control}
-            rules={{ required: true }}
             iconName="time"
+            width="48%"
           />
         </View>
 
-        <View style={{ zIndex: 9, marginBottom: 20 }}>
+        <View style={{ zIndex: 30, marginBottom: 20 }}>
           <SelectDropdown
             label="Escolaridade"
-            placeholder="Selecione sua escolaridade"
-            items={escolaridade}
+            placeholder="Selecione"
+            items={escolaridadeOptions}
             value={selectedEscolaridade}
             onChange={setSelectedEscolaridade}
           />
         </View>
 
-        <SearchableDropdown
-          label="Estados"
-          data={estados}
-          onChange={setSelectedEstado}
-          placeholder="Digite para buscar..."
+        <View style={{ zIndex: 20, marginBottom: 20 }}>
+          <SelectDropdown
+            label="Estado civil"
+            placeholder="Selecione"
+            items={estadosCivil}
+            value={selectedEstadoCivil}
+            onChange={setSelectedEstadoCivil}
+          />
+        </View>
+
+        <View style={{ zIndex: 15 }}>
+          <SearchableDropdown
+            label="Estado"
+            data={estados}
+            onChange={setSelectedEstado}
+            placeholder="Digite para buscar..."
+          />
+        </View>
+
+        <RadioGroup
+          label="Faz tratamento psicológico?"
+          options={optionSimNao}
+          value={selectedTratamento?.value ?? null}
+          onChange={(newValue) => {
+            const item = optionSimNao.find((s) => s.value === newValue) || null;
+            setSelectedTratamento(item);
+          }}
+          horizontal
         />
 
-        <View style={{  alignItems: "center"}}>   
-          <RadioGroup
-            label="Faz tratamento psicologico?"
-            options={option}
-            value={selectedTratamento?.value ?? null}
-            onChange={(newValue) => {
-              const item = option.find((s) => s.value === newValue) || null;
-              setSelectedTratamento(item);
-              if (newValue !== "sim") setTratamentoDetalhe("");
-            }}
-            horizontal
-          />
-          {selectedTratamento?.value === "sim" && (
-            <InputText
-              placeholder="Digite qual tratamento"
-              name="tratamentoDetalhe"
-              control={control}
-              rules={{ required: true }}
-              iconName="help-circle"
-              width="50%"
-            />
-          )}
-        </View>
+        {selectedTratamento?.value === "sim" && (
+          <InputText label="Qual tratamento?" name="tratamentos" control={control} placeholder={""} />
+        )}
 
-        <View style={{  alignItems: "center"}}>
-          <RadioGroup
-            label="Toma alguma medicação psiquiatrica?"
-            options={option}
-            value={selecteMedica?.value ?? null}
-            onChange={(newValue) => {
-              const item = option.find((s) => s.value === newValue) || null;
-              setSelectedMedica(item);
-              if (newValue !== "sim") setMedicaDetalhe("");
-            }}
-            horizontal
-          />
-          {selecteMedica?.value === "sim" && (
-            <InputText
-              placeholder="Digite qual medicação"
-              name="medicacaoDetalhe"
-              control={control}
-              rules={{ required: true }}
-              iconName="help-circle"
-              width="50%"
-            />
-          )}
-        </View>
+        <RadioGroup
+          label="Toma medicação psiquiátrica?"
+          options={optionSimNao}
+          value={selectedMedica?.value ?? null}
+          onChange={(newValue) => {
+            const item = optionSimNao.find((s) => s.value === newValue) || null;
+            setSelectedMedica(item);
+          }}
+          horizontal
+        />
+
+        {selectedMedica?.value === "sim" && (
+          <InputText label="Qual medicação?" name="medicacoes" control={control} placeholder={""} />
+        )}
 
         <View style={{ alignItems: "center" }}>
-          <BtnForm title="Ir para formulario Dass-21" onPress={handleSubmit(goToDass)} disabled={!isAllValid} />
-          <BtnForm title="Ir para formulario FFMQ" onPress={handleSubmit(goToFfmq)} disabled={!isAllValid} />
-          <BtnForm title="Ir para formulario Capc" onPress={handleSubmit(goToCapc)} disabled={!isAllValid} />
-          <BtnForm title="Ir para resultados" onPress={handleSubmit(goToResults)} disabled={!isAllValid} />
+          <BtnForm
+            title={loading ? "Enviando..." : "Ir para formulário Dass-21"}
+            onPress={handleSubmit(submitAndGo("/(forms dass)/welcome"))}
+            disabled={!isAllValid || loading}
+          />
+
+          <BtnForm
+            title={loading ? "Enviando..." : "Ir para formulário FFMQ"}
+            onPress={handleSubmit(submitAndGo("/(form ffmq)/welcome"))}
+            disabled={!isAllValid || loading}
+          />
+
+          <BtnForm
+            title={loading ? "Enviando..." : "Ir para formulário Capc"}
+            onPress={handleSubmit(submitAndGo("/(form capc)/welcome"))}
+            disabled={!isAllValid || loading}
+          />
+
+          <BtnForm
+            title={loading ? "Enviando..." : "Ir para resultados"}
+            onPress={handleSubmit(submitAndGo("/(results)/resultGeneral"))}
+            disabled={!isAllValid || loading}
+          />
         </View>
       </ScrollView>
     </View>
@@ -310,6 +430,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#0839A2",
     marginBottom: 10,
+    textAlign: "center",
+  },
+  // Estilos para o loading
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingContainer: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 200,
+  },
+  loadingText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: "#0839A2",
+    fontWeight: "500",
     textAlign: "center",
   },
 });

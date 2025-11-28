@@ -1,8 +1,10 @@
-import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { useCapcStore } from "@/lib/stores/useFormCapc";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useFfmqStore } from "@/lib/stores/useFormFfmq";
+import { useRouter } from "expo-router";
 
 export default function ResultCapc() {
-    const { perguntas } = useCapcStore();
+    const { perguntas } = useFfmqStore();
+    const router = useRouter();
 
     const calcularPontuacao = (indices: number[]) => {
         return indices.reduce((sum, idx) => {
@@ -23,29 +25,13 @@ export default function ResultCapc() {
 
     return (
         <View style={styles.container}>
+
+            {/* Botão de voltar */}
+            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                <Text style={styles.backText}>◀ Voltar</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Resultado do CAPC</Text>
-
-            <View style={styles.resultsGrid}>
-                <View style={styles.card}>
-                    <Text style={styles.label}>Controle Emocional:</Text>
-                    <Text style={styles.result}>{controleEmocional} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Planejamento:</Text>
-                    <Text style={styles.result}>{planejamento} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Persistência:</Text>
-                    <Text style={styles.result}>{persistencia} pontos</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.label}>Autocontrole:</Text>
-                    <Text style={styles.result}>{autocontrole} pontos</Text>
-                </View>
-            </View>
 
             <Text style={styles.subtitle}>Detalhes das Respostas:</Text>
 
@@ -64,6 +50,7 @@ export default function ResultCapc() {
                         <Text style={styles.detail}>
                             Tempo: {pergunta.tempo ? `${pergunta.tempo} segundos` : "Não registrado"}
                         </Text>
+
                         <Text style={styles.detail}>
                             Clique Resposta 1: {pergunta.cliqueResposta1 ?? 0} vezes
                         </Text>
@@ -92,6 +79,22 @@ const styles = StyleSheet.create({
         backgroundColor: "#f4f4f4",
         padding: 20,
     },
+
+    // --- Botão de voltar ---
+    backButton: {
+        marginBottom: 10,
+        alignSelf: "flex-start",
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: "#E5E7EB",
+        borderRadius: 8,
+    },
+    backText: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#374151",
+    },
+
     title: {
         fontSize: 24,
         fontWeight: "700",
@@ -105,25 +108,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         color: "#444",
     },
-    resultsGrid: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-    },
-    card: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 15,
-        width: "48%", // <== para caber dois por linha com espaço entre eles
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    scrollArea: {
-    },
+    scrollArea: {},
     responseCard: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -134,18 +119,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 2,
         elevation: 2,
-    },
-    label: {
-        fontSize: 18,
-        color: "#555",
-        fontWeight: "600",
-        marginBottom: 4,
-    },
-    result: {
-        fontSize: 22,
-        color: "#4F46E5",
-        fontWeight: "700",
-        marginBottom: 6,
     },
     questionText: {
         fontSize: 16,
