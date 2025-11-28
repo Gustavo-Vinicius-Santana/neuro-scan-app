@@ -15,6 +15,7 @@ export default function RootLayout() {
       <Stack.Screen name="(form capc)" options={{headerShown: false}}/>
       <Stack.Screen name="(form ffmq)" options={{headerShown: false}}/>
       <Stack.Screen name="(forms dass)" options={{headerShown: false}}/>
+      <Stack.Screen name="(go-no-go)" options={{headerShown: false}}/>
 
       <Stack.Screen name="(results)" options={{headerShown: false}}/>
     </Stack>

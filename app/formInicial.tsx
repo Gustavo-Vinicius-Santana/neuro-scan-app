@@ -411,6 +411,11 @@ export default function FormInicial() {
             onPress={handleSubmit(submitAndGo("/(results)/resultGeneral"))}
             disabled={!isAllValid || loading}
           />
+
+          <BtnForm
+            title={loading ? "Enviando..." : "Ir para go no go"}
+            onPress={() => router.push("/(go-no-go)/welcome")}
+          />
         </View>
       </ScrollView>
     </View>
