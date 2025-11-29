@@ -6,15 +6,18 @@ export default function Welcome() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bem-vindo ao Go no Go</Text>
+            <Text style={styles.title}>Bem-vindo ao Teste Go/No-Go</Text>
+
             <Text style={styles.description}>
-                go no go é um teste
+                O Go/No-Go é um teste de atenção e controle inibitório. 
+                Toque apenas quando o estímulo for válido (Go) e permaneça parado quando for inválido (No-Go).
             </Text>
+
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => router.push("/(go-no-go)/test")}
             >
-                <Text style={styles.buttonText}>Iniciar</Text>
+                <Text style={styles.buttonText}>Iniciar Teste</Text>
             </TouchableOpacity>
         </View>
     );
@@ -37,6 +40,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: "center",
         marginBottom: 40,
+        lineHeight: 22,
     },
     button: {
         backgroundColor: "#4F46E5",
