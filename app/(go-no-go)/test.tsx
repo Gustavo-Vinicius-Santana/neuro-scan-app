@@ -44,12 +44,39 @@ export default function Test() {
     const numGo = Math.round(TOTAL_STIMULI * GO_PROPORTION);
     const numNoGo = TOTAL_STIMULI - numGo;
 
-    const arr: StimType[] = [
+    const pool: StimType[] = [
       ...Array(numGo).fill("GO"),
       ...Array(numNoGo).fill("NOGO"),
     ];
 
-    return arr.sort(() => Math.random() - 0.5);
+    const result: StimType[] = [];
+
+    let lastNoGoCount = 0;
+
+    while (pool.length > 0) {
+      // Filtra opções que não violam a regra
+      const validOptions = pool.filter((stim) => {
+        if (stim === "NOGO" && lastNoGoCount >= 3) return false;
+        return true;
+      });
+
+      // Escolhe aleatoriamente entre as opções válidas
+      const choice = validOptions[Math.floor(Math.random() * validOptions.length)];
+      result.push(choice);
+
+      // Remove 1 ocorrência do estímulo escolhido do pool
+      const index = pool.indexOf(choice);
+      pool.splice(index, 1);
+
+      // Atualiza contador de NOGO consecutivos
+      if (choice === "NOGO") {
+        lastNoGoCount++;
+      } else {
+        lastNoGoCount = 0;
+      }
+    }
+
+    return result;
   };
 
   // ---------------------------------------------------
@@ -283,6 +310,7 @@ const styles = StyleSheet.create({
 
   endContainer: {
     alignItems: "center",
+    width: "100%",
   },
 
   endText: {
