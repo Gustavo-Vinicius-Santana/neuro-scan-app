@@ -183,7 +183,7 @@ export default function QuestionnaireTemplateDireto({
           : [];
 
       const payload = {
-        usuario_id: 1,
+        usuario_id: user?.id,
         pergunta_id: initialId + currentIndex,
         resposta: r.resposta,
         duracao: duracaoFinal,

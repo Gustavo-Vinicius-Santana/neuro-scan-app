@@ -4,19 +4,37 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useGoNoGoStore } from "../../lib/stores/useGoNoGo";
+import { useRequest } from "@/lib/hooks/useRequest"; // Importe seu hook
+import { useUserStore } from "@/lib/stores/useUserStore";
 
 // Tipo do estímulo
 type StimType = "GO" | "NOGO";
 
-const TOTAL_STIMULI = 10;
+const TOTAL_STIMULI = 100;
 const GO_PROPORTION = 0.7;
 
 const STIM_DURATION = 800;
-const INTERVAL_DURATION = 700;
+
+const isDesktop = (): boolean => {
+  // Em React Native Web, Platform.OS será 'web'
+  if (Platform.OS === 'web') {
+    const { width } = Dimensions.get('window');
+    // Considera desktop se a largura for maior que 768px
+    // Você pode ajustar esse valor conforme necessário
+    return width > 768;
+  }
+  // Em dispositivos móveis nativos (iOS/Android), sempre false
+  return false;
+};
+
+const INTERVAL_DURATION = isDesktop() ? 700 : 300;
 
 export default function Test() {
   const {
@@ -25,7 +43,13 @@ export default function Test() {
     computeMetrics,
     reset,
     saveMetrics,
+    lastMetrics,
   } = useGoNoGoStore();
+
+  const { post, loading: sendingData } = useRequest(); // Use seu hook
+  const { user } = useUserStore();
+  
+  const [sending, setSending] = useState(false);
 
   const [stimuliList, setStimuliList] = useState<StimType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,40 +67,149 @@ export default function Test() {
   const buildSequence = (): StimType[] => {
     const numGo = Math.round(TOTAL_STIMULI * GO_PROPORTION);
     const numNoGo = TOTAL_STIMULI - numGo;
-
-    const pool: StimType[] = [
-      ...Array(numGo).fill("GO"),
-      ...Array(numNoGo).fill("NOGO"),
-    ];
-
+    
+    // Cria arrays separados
+    const goArray: StimType[] = Array(numGo).fill("GO");
+    const noGoArray: StimType[] = Array(numNoGo).fill("NOGO");
+    
     const result: StimType[] = [];
-
-    let lastNoGoCount = 0;
-
-    while (pool.length > 0) {
-      // Filtra opções que não violam a regra
-      const validOptions = pool.filter((stim) => {
-        if (stim === "NOGO" && lastNoGoCount >= 3) return false;
-        return true;
-      });
-
-      // Escolhe aleatoriamente entre as opções válidas
-      const choice = validOptions[Math.floor(Math.random() * validOptions.length)];
-      result.push(choice);
-
-      // Remove 1 ocorrência do estímulo escolhido do pool
-      const index = pool.indexOf(choice);
-      pool.splice(index, 1);
-
-      // Atualiza contador de NOGO consecutivos
-      if (choice === "NOGO") {
-        lastNoGoCount++;
+    let consecutiveCount = 0;
+    let lastType: StimType | null = null;
+    
+    // Índices para controlar quantos de cada tipo já usamos
+    let goUsed = 0;
+    let noGoUsed = 0;
+    
+    while (result.length < TOTAL_STIMULI) {
+      // Calcula quantos de cada tipo ainda precisa usar
+      const goNeeded = numGo - goUsed;
+      const noGoNeeded = numNoGo - noGoUsed;
+      
+      // Determina tipos possíveis
+      const possibleTypes: StimType[] = [];
+      if (goNeeded > 0) possibleTypes.push("GO");
+      if (noGoNeeded > 0) possibleTypes.push("NOGO");
+      
+      // Se só tem um tipo possível, usa ele
+      if (possibleTypes.length === 1) {
+        const onlyType = possibleTypes[0];
+        result.push(onlyType);
+        if (onlyType === "GO") goUsed++;
+        else noGoUsed++;
+        
+        if (onlyType === lastType) consecutiveCount++;
+        else {
+          consecutiveCount = 1;
+          lastType = onlyType;
+        }
+        continue;
+      }
+      
+      // Se já tem 3 consecutivos do mesmo tipo, força o outro
+      if (consecutiveCount >= 3 && lastType) {
+        const forcedType: string = lastType === "GO" ? "NOGO" : "GO";
+        
+        // Verifica se pode usar o tipo forçado
+        if ((forcedType === "GO" && goNeeded > 0) || 
+            (forcedType === "NOGO" && noGoNeeded > 0)) {
+          result.push(forcedType);
+          if (forcedType === "GO") goUsed++;
+          else noGoUsed++;
+          
+          consecutiveCount = 1;
+          lastType = forcedType;
+        } else {
+          // Se não pode forçar, usa o mesmo tipo
+          result.push(lastType);
+          if (lastType === "GO") goUsed++;
+          else noGoUsed++;
+          
+          consecutiveCount++;
+        }
+        continue;
+      }
+      
+      // Escolhe aleatoriamente, mas com bias baseado no que resta
+      // Ajusta probabilidade para manter proporção
+      const totalNeeded = goNeeded + noGoNeeded;
+      const goProbability = goNeeded / totalNeeded;
+      
+      const random = Math.random();
+      const chosenType = random < goProbability ? "GO" : "NOGO";
+      
+      // Verifica se ainda tem do tipo escolhido
+      if ((chosenType === "GO" && goNeeded > 0) || 
+          (chosenType === "NOGO" && noGoNeeded > 0)) {
+        result.push(chosenType);
+        if (chosenType === "GO") goUsed++;
+        else noGoUsed++;
+        
+        if (chosenType === lastType) {
+          consecutiveCount++;
+        } else {
+          consecutiveCount = 1;
+          lastType = chosenType;
+        }
       } else {
-        lastNoGoCount = 0;
+        // Se não tem, usa o outro tipo
+        const otherType = chosenType === "GO" ? "NOGO" : "GO";
+        result.push(otherType);
+        if (otherType === "GO") goUsed++;
+        else noGoUsed++;
+        
+        if (otherType === lastType) {
+          consecutiveCount++;
+        } else {
+          consecutiveCount = 1;
+          lastType = otherType;
+        }
       }
     }
-
+    
+    // Verificação final
+    const finalGoCount = result.filter(stim => stim === "GO").length;
+    const finalNoGoCount = result.filter(stim => stim === "NOGO").length;
+    
+    console.log(`Sequência final: ${finalGoCount} GO, ${finalNoGoCount} NOGO`);
+    
     return result;
+  };
+
+  // ---------------------------------------------------
+  // ENVIAR DADOS PARA O BACKEND
+  // ---------------------------------------------------
+  const sendResultsToBackend = async () => {
+    if (!lastMetrics) return;
+    
+    setSending(true);
+    
+    try {
+      // TODO: Obter o ID do usuário logado
+      // Isso pode vir de um contexto de autenticação, AsyncStorage, etc.
+      const userId = user?.id; // Substitua pela lógica real de obtenção do userId
+      
+      const payload = {
+        usuario_id: userId,
+        erros_comissao_percentual: lastMetrics.commissionErrorsPct,
+        erros_omissao_percentual: lastMetrics.omissionErrorsPct,
+        acerto_go_percentual: lastMetrics.goAccuracyPct,
+        tempo_medio_reacao_ms: lastMetrics.meanRT,
+        variabilidade_rt_ms: lastMetrics.rtStdDev,
+        latencia_media_nogo_erro: lastMetrics.meanNoGoLatency,
+      };
+
+      // Envia para o endpoint
+      const api = process.env.EXPO_PUBLIC_API_URL;
+
+      await post(`${api}api/gonogo`, payload); 
+      
+      console.log("Dados enviados com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar dados:", error);
+      // Mesmo com erro, permite ver os resultados
+    } finally {
+      setSending(false);
+    }
   };
 
   // ---------------------------------------------------
@@ -88,6 +221,7 @@ export default function Test() {
     setCurrentIndex(0);
     setStimuliList(buildSequence());
     setStarted(true);
+    setSending(false); // Reseta estado de envio
   };
 
   // ---------------------------------------------------
@@ -144,6 +278,15 @@ export default function Test() {
   }, [currentIndex, stimuliList, started]);
 
   // ---------------------------------------------------
+  // ENVIA DADOS QUANDO O TESTE TERMINAR
+  // ---------------------------------------------------
+  useEffect(() => {
+    if (finished && lastMetrics) {
+      sendResultsToBackend();
+    }
+  }, [finished, lastMetrics]);
+
+  // ---------------------------------------------------
   // RENDER
   // ---------------------------------------------------
   return (
@@ -151,7 +294,7 @@ export default function Test() {
       <StatusBar style="dark" />
 
       {/* INSTRUÇÕES */}
-      {!started && !finished && (
+      {!started && !finished && !sending && (
         <View style={styles.instructionsBox}>
           <Text style={styles.title}>Teste Go/No-Go</Text>
 
@@ -182,7 +325,7 @@ export default function Test() {
       )}
 
       {/* TESTE EM ANDAMENTO */}
-      {started && !finished && (
+      {started && !finished && !sending && (
         <TouchableOpacity
           style={styles.stimContainer}
           onPress={handleResponse}
@@ -208,8 +351,16 @@ export default function Test() {
         </TouchableOpacity>
       )}
 
-      {/* FINAL */}
-      {finished && (
+      {/* ENVIANDO DADOS */}
+      {sending && (
+        <View style={styles.sendingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.sendingText}>Enviando resultados...</Text>
+        </View>
+      )}
+
+      {/* FINAL (após envio ou se falhar o envio) */}
+      {finished && !sending && (
         <View style={styles.endContainer}>
           <Text style={styles.endText}>Teste Finalizado!</Text>
 
@@ -306,6 +457,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#333",
     opacity: 0.6,
+  },
+
+  sendingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+
+  sendingText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: "#333",
+    fontWeight: "600",
   },
 
   endContainer: {
