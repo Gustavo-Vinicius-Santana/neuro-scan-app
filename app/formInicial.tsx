@@ -413,6 +413,12 @@ export default function FormInicial() {
           />
 
           <BtnForm
+            title={loading ? "Enviando..." : "Ir para click test"}
+            onPress={() => {router.push("/(click-test)/welcome")}}
+            //disabled={!isAllValid || loading}
+          />
+
+          <BtnForm
             title={loading ? "Enviando..." : "Ir para resultados"}
             onPress={handleSubmit(submitAndGo("/(results)/resultGeneral"))}
             disabled={!isAllValid || loading}

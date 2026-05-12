@@ -9,6 +9,7 @@ export default function RootLayout() {
             <Stack.Screen name="resultDass" options={{headerShown: false}} />
             <Stack.Screen name="resultFfmq" options={{headerShown: false}} />
             <Stack.Screen name="resultGoNoGo" options={{headerShown: false}} />
+            <Stack.Screen name="resultClickTest" options={{headerShown: false}} />
 
             <Stack.Screen name="resultSensors" options={{headerShown: false}} />
         </Stack>

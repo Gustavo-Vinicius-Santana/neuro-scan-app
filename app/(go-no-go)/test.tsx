@@ -20,7 +20,7 @@ type StimType = "GO" | "NOGO";
 const TOTAL_STIMULI = 100;
 const GO_PROPORTION = 0.7;
 
-const STIM_DURATION = 800;
+const STIM_DURATION = 250;
 
 const isDesktop = (): boolean => {
   // Em React Native Web, Platform.OS será 'web'
@@ -34,7 +34,7 @@ const isDesktop = (): boolean => {
   return false;
 };
 
-const INTERVAL_DURATION = isDesktop() ? 700 : 300;
+const INTERVAL_DURATION = isDesktop() ? 900 : 900;
 
 export default function Test() {
   const {
